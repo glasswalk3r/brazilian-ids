@@ -2,7 +2,7 @@
 
 import random
 
-from brazilian_ids.util import clean_id, NONDIGIT_REGEX
+from brazilian_ids.util import NONDIGIT_REGEX
 
 
 CPF_WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -33,7 +33,7 @@ class InvalidCPFLenghtError(InvalidCPFError):
 
 def is_cpf_valid(cpf: str, autopad: bool = True):
     """Check whether CPF is valid."""
-    cpf = clean_id(cpf)
+    cpf = NONDIGIT_REGEX.sub("", cpf)
 
     # all complete CPF are 11 digits long
     if len(cpf) < 11:
@@ -71,7 +71,7 @@ def verification_digits(cpf: str) -> tuple[int, int]:
     If the length of the CPF is less than 9 characters, the
     InvalidCPFLengthError is raised.
     """
-    cpf = clean_id(cpf)
+    cpf = NONDIGIT_REGEX.sub("", cpf)
 
     if len(cpf) < 9:
         raise InvalidCPFLenghtError(cpf)
