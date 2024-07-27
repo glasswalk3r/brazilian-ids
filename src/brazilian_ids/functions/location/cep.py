@@ -13,7 +13,7 @@ See also:
 """
 
 from dataclasses import dataclass
-from brazilian_ids.util import NONDIGIT_REGEX
+from brazilian_ids.functions.util import NONDIGIT_REGEX
 
 
 @dataclass

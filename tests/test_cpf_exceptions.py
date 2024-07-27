@@ -1,4 +1,4 @@
-from brazilian_ids.person.cpf import InvalidCPFError, InvalidCPFLenghtError
+from brazilian_ids.functions.person.cpf import InvalidCPFError, InvalidCPFLenghtError
 
 
 def test_invalid_cpf_error_class():

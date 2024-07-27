@@ -2,7 +2,7 @@ import os
 import pytest
 from collections import deque, namedtuple
 
-from brazilian_ids.person.cpf import (
+from brazilian_ids.functions.person.cpf import (
     is_cpf_valid,
     InvalidCPFError,
     format,

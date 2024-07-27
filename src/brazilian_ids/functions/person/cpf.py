@@ -2,7 +2,7 @@
 
 import random
 
-from brazilian_ids.util import NONDIGIT_REGEX
+from brazilian_ids.functions.util import NONDIGIT_REGEX
 
 
 CPF_WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9]

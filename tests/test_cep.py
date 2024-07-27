@@ -1,5 +1,5 @@
 from ast import parse
-from brazilian_ids.location.cep import format_cep, parse_cep, CEP
+from brazilian_ids.functions.location.cep import format_cep, parse_cep, CEP
 
 
 masp_cep = "01310-200"
