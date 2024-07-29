@@ -1,21 +1,20 @@
-from ast import parse
-from brazilian_ids.functions.location.cep import format_cep, parse_cep, CEP
+from brazilian_ids.functions.location.cep import format, parse, CEP
 
 
 masp_cep = "01310-200"
 
 
-def test_format_cep():
-    assert format_cep("01310200") == masp_cep
+def test_format():
+    assert format("01310200") == masp_cep
 
 
-def test_parse_cep():
-    result = parse_cep("01310200")
+def test_parse():
+    result = parse("01310200")
     assert isinstance(result, CEP)
 
 
-def test_parse_cep_formated():
-    result = parse_cep(masp_cep)
+def test_parse_formated():
+    result = parse(masp_cep)
     assert isinstance(result, CEP)
 
 

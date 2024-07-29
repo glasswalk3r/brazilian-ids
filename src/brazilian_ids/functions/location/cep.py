@@ -29,7 +29,7 @@ class CEP:
     suffix: str
 
 
-def format_cep(cep: str) -> str:
+def format(cep: str) -> str:
     """Applies typical 00000-000 formatting to CEP."""
     cep = NONDIGIT_REGEX.sub("", cep)
     dig = len(cep)
@@ -44,9 +44,9 @@ def format_cep(cep: str) -> str:
     return "{0}-{1}".format(cep[:-3], cep[-3:])
 
 
-def parse_cep(cep: str) -> CEP:
+def parse(cep: str) -> CEP:
     """Split a CEP into region, sub-region, sector, subsector, division."""
-    fmtcep = format_cep(cep)
+    fmtcep = format(cep)
     cep = fmtcep
     geo = [fmtcep[:i] for i in range(1, 6)]
     suffix = fmtcep[-3:]
