@@ -16,14 +16,14 @@ class InvalidPisPasedTypeMixin:
 class InvalidPISPASEPError(InvalidPisPasedTypeMixin, InvalidIdError):
     """Exception for an invalid PIS/PASEP."""
 
-    def __init__(self, pis_pasep: str):
+    def __init__(self, pis_pasep: str) -> None:
         super().__init__(id=pis_pasep)
 
 
 class InvalidPISPASEPLengthError(InvalidPisPasedTypeMixin, InvalidIdLenghtError):
     """Exception for an invalid PIS/PASEP with less than 10 digits."""
 
-    def __init__(self, pis_pasep: str):
+    def __init__(self, pis_pasep: str) -> None:
         super().__init__(id=pis_pasep, expected_digits=10)
 
 
