@@ -1,9 +1,9 @@
 from brazilian_ids.functions.person.cpf import InvalidCPFError, InvalidCPFLenghtError
-from brazilian_ids.functions.exceptions import InvalidIdLenghtError
+from brazilian_ids.functions.exceptions import InvalidIdLenghtError, InvalidIdError
 
 
 def test_invalid_cpf_error_class():
-    assert issubclass(InvalidCPFError, ValueError)
+    assert issubclass(InvalidCPFError, InvalidIdError)
 
 
 def test_invalid_cpf_error_instance():
