@@ -8,6 +8,5 @@ def test_invalid_pis_pasep_length_error_class():
 def test_invalid_pis_pasep_length_error_instance():
     instance = InvalidPISPASEPLengthError("1234")
     assert (
-        str(instance)
-        == "The PIS/PASEP '1234' (without the verification digit) length is incorrect: got 4, expect 10 digits"
+        str(instance) == "A PIS/PASEP must have at least 10 digits, '1234' has only 4"
     )

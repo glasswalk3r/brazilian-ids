@@ -1,4 +1,5 @@
 from brazilian_ids.functions.person.cpf import InvalidCPFError, InvalidCPFLenghtError
+from brazilian_ids.functions.exceptions import InvalidIdLenghtError
 
 
 def test_invalid_cpf_error_class():
@@ -7,17 +8,17 @@ def test_invalid_cpf_error_class():
 
 def test_invalid_cpf_error_instance():
     instance = InvalidCPFError("1234")
-    assert hasattr(instance, "cpf")
-    assert instance.cpf == "1234"
+    assert hasattr(instance, "id")
+    assert instance.id == "1234"
 
 
 def test_invalid_cpf_error_custom():
-    instance = InvalidCPFError("1234", "foobar")
-    assert str(instance).startswith("foobar")
+    instance = InvalidCPFError("1234")
+    assert str(instance).startswith("The CPF")
 
 
 def test_invalid_cpf_length_error_class():
-    assert issubclass(InvalidCPFLenghtError, InvalidCPFError)
+    assert issubclass(InvalidCPFLenghtError, InvalidIdLenghtError)
 
 
 def test_invalid_cpf_length_error_instance():

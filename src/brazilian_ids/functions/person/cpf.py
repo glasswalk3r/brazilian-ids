@@ -3,32 +3,31 @@
 import random
 
 from brazilian_ids.functions.util import NONDIGIT_REGEX
+from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLenghtError
 
 
 CPF_WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-class InvalidCPFError(ValueError):
+class InvalidCPFTypeMixin:
+    """Mixin class for CPF errors."""
+
+    def id_type(self):
+        return "CPF"
+
+
+class InvalidCPFError(InvalidCPFTypeMixin, InvalidIdError):
     """Exception for an invalid CPF."""
 
-    def __init__(self, cpf: str, message: None | str = None):
-        self.cpf = cpf
-
-        if message is None:
-            msg = f"The CPF '{cpf}' is invalid"
-        else:
-            msg = message
-        super().__init__(msg)
+    def __init__(self, cpf: str):
+        super().__init__(id=cpf)
 
 
-class InvalidCPFLenghtError(InvalidCPFError):
+class InvalidCPFLenghtError(InvalidCPFTypeMixin, InvalidIdLenghtError):
     """Exception for an invalid CPF with less than 9 digits."""
 
     def __init__(self, cpf: str):
-        msg = "A CPF must have at least 9 digits, '{0}' has only {1}".format(
-            cpf, len(cpf)
-        )
-        super().__init__(cpf=cpf, message=msg)
+        super().__init__(id=cpf, expected_digits=9)
 
 
 def is_cpf_valid(cpf: str, autopad: bool = True):

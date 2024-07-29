@@ -3,22 +3,28 @@
 from random import randint
 
 from brazilian_ids.functions.util import NONDIGIT_REGEX
+from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLenghtError
 
 
-class InvalidPISPASEPError(ValueError):
+class InvalidPisPasedTypeMixin:
+    """Mixin class for PIS/PASEP errors."""
+
+    def id_type(self):
+        return "PIS/PASEP"
+
+
+class InvalidPISPASEPError(InvalidPisPasedTypeMixin, InvalidIdError):
+    """Exception for an invalid PIS/PASEP."""
+
     def __init__(self, pis_pasep: str):
-        msg = f"The PIS/PASEP '{pis_pasep}' is invalid"
-        self.pis_pasep = pis_pasep
-        super().__init__(msg)
+        super().__init__(id=pis_pasep)
 
 
-class InvalidPISPASEPLengthError(ValueError):
+class InvalidPISPASEPLengthError(InvalidPisPasedTypeMixin, InvalidIdLenghtError):
+    """Exception for an invalid PIS/PASEP with less than 10 digits."""
+
     def __init__(self, pis_pasep: str):
-        msg = "The PIS/PASEP '{0}' {1} length is incorrect: got {2}, expect 10 digits".format(
-            pis_pasep, "(without the verification digit)", len(pis_pasep)
-        )
-        self.pis_pasep = pis_pasep
-        super().__init__(msg)
+        super().__init__(id=pis_pasep, expected_digits=10)
 
 
 def is_valid(pis_pasep: str, autopad: bool = True) -> bool:
