@@ -8,6 +8,7 @@ class InvalidIdError(ValueError):
 
     @abstractmethod
     def id_type(self):
+        """Return the ID type. Subclasses must override this method."""
         pass
 
     def __init__(self, id: str, message: None | str = None) -> None:
