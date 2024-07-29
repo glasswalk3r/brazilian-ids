@@ -3,11 +3,11 @@ import pytest
 from collections import deque, namedtuple
 
 from brazilian_ids.functions.person.cpf import (
-    is_cpf_valid,
+    is_valid,
     InvalidCPFError,
     format,
     verification_digits,
-    random_cpf,
+    random,
 )
 
 
@@ -27,22 +27,22 @@ def read_csv() -> tuple[CPFRecord, ...]:
     return tuple(data)
 
 
-def test_is_cpf_valid(read_csv):
+def test_is_valid(read_csv):
     for cpf in read_csv:
-        assert is_cpf_valid(cpf.raw_cpf)
+        assert is_valid(cpf.raw_cpf)
 
 
 def test_not_valid_cpf():
     with pytest.raises(InvalidCPFError):
-        is_cpf_valid("123456")
+        is_valid("123456")
 
 
 def test_too_short_cpf():
-    assert not is_cpf_valid(cpf="12345", autopad=False)
+    assert not is_valid(cpf="12345", autopad=False)
 
 
 def test_too_long_cpf():
-    assert not is_cpf_valid(cpf="123456789101", autopad=False)
+    assert not is_valid(cpf="123456789101", autopad=False)
 
 
 def test_format(read_csv):
@@ -61,11 +61,11 @@ def test_verification_digits(read_csv):
         )
 
 
-def test_random_cpf_raw(read_csv):
+def test_random_raw(read_csv):
     for cpf in read_csv:
-        assert is_cpf_valid(random_cpf(formatted=False))
+        assert is_valid(random(formatted=False))
 
 
-def test_random_cpf_formated(read_csv):
+def test_random_formated(read_csv):
     for cpf in read_csv:
-        assert is_cpf_valid(random_cpf(formatted=True))
+        assert is_valid(random(formatted=True))

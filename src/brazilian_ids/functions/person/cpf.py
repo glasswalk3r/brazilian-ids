@@ -1,6 +1,6 @@
 """Functions to handle a CPF."""
 
-import random
+from random import randint
 
 from brazilian_ids.functions.util import NONDIGIT_REGEX
 from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLenghtError
@@ -30,7 +30,7 @@ class InvalidCPFLenghtError(InvalidCPFTypeMixin, InvalidIdLenghtError):
         super().__init__(id=cpf, expected_digits=9)
 
 
-def is_cpf_valid(cpf: str, autopad: bool = True):
+def is_valid(cpf: str, autopad: bool = True):
     """Check whether CPF is valid."""
     cpf = NONDIGIT_REGEX.sub("", cpf)
 
@@ -39,7 +39,7 @@ def is_cpf_valid(cpf: str, autopad: bool = True):
         if not autopad:
             return False
 
-        cpf = pad_cpf(cpf)
+        cpf = pad(cpf)
 
     elif len(cpf) > 11:
         return False
@@ -85,27 +85,27 @@ def verification_digits(cpf: str) -> tuple[int, int]:
 
 def format(cpf: str) -> str:
     """Applies the typical 000.000.000-00 formatting to CPF."""
-    cpf = pad_cpf(cpf)
+    cpf = pad(cpf)
     fmt = "{0}.{1}.{2}-{3}"
     return fmt.format(cpf[:3], cpf[3:6], cpf[6:9], cpf[9:])
 
 
-def pad_cpf(cpf: str) -> str:
+def pad(cpf: str) -> str:
     """Takes a CPF that has leading zeros and pads it.
 
     If the given CPF is invalid, the ``InvalidCPFError`` exception is raised.
     """
     padded = "%0.011i" % int(cpf)
 
-    if not is_cpf_valid(cpf=cpf, autopad=False):
+    if not is_valid(cpf=cpf, autopad=False):
         raise InvalidCPFError(cpf)
 
     return padded
 
 
-def random_cpf(formatted: bool = True) -> str:
+def random(formatted: bool = True) -> str:
     """Create a random, valid CPF identifier."""
-    stem = str(random.randint(100000000, 999999999))
+    stem = str(randint(100000000, 999999999))
     digits = verification_digits(stem)
     cpf = "{0}{1}{2}".format(stem, digits[0], digits[1])
 
