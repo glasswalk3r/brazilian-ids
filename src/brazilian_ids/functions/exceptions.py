@@ -22,7 +22,8 @@ class InvalidIdError(ValueError):
 
 
 class InvalidIdLenghtError(InvalidIdError):
-    """Exception for an ID that is missing some digits."""
+    """Exception for an ID that has missing digits, excluding the verification
+    one in the expected number of digits."""
 
     def __init__(self, id: str, expected_digits: int) -> None:
         msg = "A {0} must have at least {1} digits, '{2}' has only {3}".format(
