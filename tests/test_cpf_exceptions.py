@@ -1,26 +1,26 @@
-from brazilian_ids.functions.person.cpf import InvalidCPFError, InvalidCPFLenghtError
-from brazilian_ids.functions.exceptions import InvalidIdLenghtError, InvalidIdError
+from brazilian_ids.functions.person.cpf import InvalidCpfError, InvalidCpfLengthError
+from brazilian_ids.functions.exceptions import InvalidIdLengthError, InvalidIdError
 
 
 def test_invalid_cpf_error_class():
-    assert issubclass(InvalidCPFError, InvalidIdError)
+    assert issubclass(InvalidCpfError, InvalidIdError)
 
 
 def test_invalid_cpf_error_instance():
-    instance = InvalidCPFError("1234")
+    instance = InvalidCpfError("1234")
     assert hasattr(instance, "id")
     assert instance.id == "1234"
 
 
 def test_invalid_cpf_error_custom():
-    instance = InvalidCPFError("1234")
+    instance = InvalidCpfError("1234")
     assert str(instance).startswith("The CPF")
 
 
 def test_invalid_cpf_length_error_class():
-    assert issubclass(InvalidCPFLenghtError, InvalidIdLenghtError)
+    assert issubclass(InvalidCpfLengthError, InvalidIdLengthError)
 
 
 def test_invalid_cpf_length_error_instance():
-    instance = InvalidCPFLenghtError("1234")
+    instance = InvalidCpfLengthError("1234")
     assert str(instance) == "A CPF must have at least 9 digits, '1234' has only 4"

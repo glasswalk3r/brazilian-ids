@@ -3,7 +3,7 @@
 from random import randint
 
 from brazilian_ids.functions.util import NONDIGIT_REGEX
-from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLenghtError
+from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthError
 
 
 class InvalidPisPasedTypeMixin:
@@ -20,7 +20,7 @@ class InvalidPISPASEPError(InvalidPisPasedTypeMixin, InvalidIdError):
         super().__init__(id=pis_pasep)
 
 
-class InvalidPISPASEPLengthError(InvalidPisPasedTypeMixin, InvalidIdLenghtError):
+class InvalidPISPASEPLengthError(InvalidPisPasedTypeMixin, InvalidIdLengthError):
     """Exception for an invalid PIS/PASEP with less than 10 digits."""
 
     def __init__(self, pis_pasep: str) -> None:

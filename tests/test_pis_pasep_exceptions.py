@@ -2,7 +2,7 @@ from brazilian_ids.functions.person.pis_pasep import (
     InvalidPISPASEPLengthError,
     InvalidPISPASEPError,
 )
-from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLenghtError
+from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthError
 
 
 def test_invalid_pis_error_class():
@@ -10,7 +10,7 @@ def test_invalid_pis_error_class():
 
 
 def test_invalid_pis_pasep_length_error_class():
-    assert issubclass(InvalidPISPASEPLengthError, InvalidIdLenghtError)
+    assert issubclass(InvalidPISPASEPLengthError, InvalidIdLengthError)
 
 
 def test_invalid_pis_pasep_length_error_instance():

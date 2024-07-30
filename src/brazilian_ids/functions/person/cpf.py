@@ -3,27 +3,27 @@
 from random import randint
 
 from brazilian_ids.functions.util import NONDIGIT_REGEX
-from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLenghtError
+from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthError
 
 
 CPF_WEIGHTS = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-class InvalidCPFTypeMixin:
+class InvalidCpfTypeMixin:
     """Mixin class for CPF errors."""
 
     def id_type(self):
         return "CPF"
 
 
-class InvalidCPFError(InvalidCPFTypeMixin, InvalidIdError):
+class InvalidCpfError(InvalidCpfTypeMixin, InvalidIdError):
     """Exception for an invalid CPF."""
 
     def __init__(self, cpf: str):
         super().__init__(id=cpf)
 
 
-class InvalidCPFLenghtError(InvalidCPFTypeMixin, InvalidIdLenghtError):
+class InvalidCpfLengthError(InvalidCpfTypeMixin, InvalidIdLengthError):
     """Exception for an invalid CPF with less than 9 digits."""
 
     def __init__(self, cpf: str):
@@ -73,7 +73,7 @@ def verification_digits(cpf: str) -> tuple[int, int]:
     cpf = NONDIGIT_REGEX.sub("", cpf)
 
     if len(cpf) < 9:
-        raise InvalidCPFLenghtError(cpf)
+        raise InvalidCpfLengthError(cpf)
 
     digits = [int(k) for k in cpf[:10]]
     # find the first check digit
@@ -98,7 +98,7 @@ def pad(cpf: str) -> str:
     padded = "%0.011i" % int(cpf)
 
     if not is_valid(cpf=cpf, autopad=False):
-        raise InvalidCPFError(cpf)
+        raise InvalidCpfError(cpf)
 
     return padded
 

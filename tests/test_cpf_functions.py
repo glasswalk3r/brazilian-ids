@@ -4,7 +4,7 @@ from collections import deque, namedtuple
 
 from brazilian_ids.functions.person.cpf import (
     is_valid,
-    InvalidCPFError,
+    InvalidCpfError,
     format,
     verification_digits,
     random,
@@ -33,7 +33,7 @@ def test_is_valid(read_csv):
 
 
 def test_not_valid_cpf():
-    with pytest.raises(InvalidCPFError):
+    with pytest.raises(InvalidCpfError):
         is_valid("123456")
 
 

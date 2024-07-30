@@ -1,12 +1,12 @@
 import pytest
 from brazilian_ids.functions.real_state.cno import (
-    InvalidCNOLengthError,
+    InvalidCnoLengthError,
     random,
     is_valid,
     format,
     verification_digit,
     pad,
-    InvalidCNOError,
+    InvalidCnoError,
 )
 
 
@@ -51,7 +51,7 @@ def test_verification_digit(cno_sample):
 
 
 def test_verification_digit_raises_exception():
-    with pytest.raises(InvalidCNOLengthError):
+    with pytest.raises(InvalidCnoLengthError):
         verification_digit("1234567891", validate_length=True)
 
 
@@ -64,5 +64,5 @@ def test_pad_with_validation():
 
 
 def test_pad_raises_exception():
-    with pytest.raises(InvalidCNOError):
+    with pytest.raises(InvalidCnoError):
         assert pad("1233456789", validate_after=True)

@@ -16,7 +16,7 @@ See also:
 from random import randint
 
 from brazilian_ids.functions.util import NONDIGIT_REGEX
-from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLenghtError
+from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthError
 
 
 class InvalidCnoTypeMixin:
@@ -26,14 +26,14 @@ class InvalidCnoTypeMixin:
         return "CNO"
 
 
-class InvalidCNOError(InvalidCnoTypeMixin, InvalidIdError):
+class InvalidCnoError(InvalidCnoTypeMixin, InvalidIdError):
     """Exception for invalid CNO errors"""
 
     def __init__(self, cno: str) -> None:
         super().__init__(id=cno)
 
 
-class InvalidCNOLengthError(InvalidCnoTypeMixin, InvalidIdLenghtError):
+class InvalidCnoLengthError(InvalidCnoTypeMixin, InvalidIdLengthError):
     """Exception for invalid CNO length error."""
 
     def __init__(self, cno: str, expected_digits: int = 11) -> None:
@@ -65,7 +65,7 @@ def verification_digit(cno: str, validate_length: bool = False) -> int:
     cno = NONDIGIT_REGEX.sub("", cno)
 
     if validate_length and len(cno) < 11:
-        raise InvalidCNOLengthError(cno=cno)
+        raise InvalidCnoLengthError(cno=cno)
 
     digits = [int(k) for k in cno[:12]]
     cei_weights = [7, 4, 1, 8, 5, 2, 1, 6, 3, 7, 4]
@@ -93,7 +93,7 @@ def pad(cno: str, validate_after=False) -> str:
         if is_valid(padded):
             return padded
         else:
-            raise InvalidCNOError(cno)
+            raise InvalidCnoError(cno)
     return padded
 
 

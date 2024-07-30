@@ -21,7 +21,7 @@ class InvalidIdError(ValueError):
             super().__init__(message)
 
 
-class InvalidIdLenghtError(InvalidIdError):
+class InvalidIdLengthError(InvalidIdError):
     """Exception for an ID that has missing digits, excluding the verification
     one in the expected number of digits."""
 
