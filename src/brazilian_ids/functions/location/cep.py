@@ -18,7 +18,10 @@ from brazilian_ids.functions.util import NONDIGIT_REGEX
 
 @dataclass
 class CEP:
-    """Representation of a CEP."""
+    """Representation of a CEP.
+
+    Should be obtained from the ``parse`` function.
+    """
 
     formatted_cep: str
     region: str
