@@ -6,13 +6,14 @@ from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthEr
 
 
 def test_invalid_cno_error_class():
-    issubclass(InvalidCnoError, InvalidIdError)
+    assert issubclass(InvalidCnoError, InvalidIdError)
 
 
 def test_invalid_cno_error_instance():
     instance = InvalidCnoError("1234")
-    hasattr(instance, "id")
-    hasattr(instance, "id_type")
+    assert isinstance(instance, InvalidCnoError)
+    assert hasattr(instance, "id")
+    assert hasattr(instance, "id_type")
 
 
 def test_invalid_cno_error_length_class():
@@ -21,6 +22,6 @@ def test_invalid_cno_error_length_class():
 
 def test_invalid_cno_error_length_instance():
     instance = InvalidCnoLengthError(cno="1234")
-    hasattr(instance, "id")
-    hasattr(instance, "id_type")
-    hasattr(instance, "expected_length")
+    assert isinstance(instance, InvalidCnoLengthError)
+    assert hasattr(instance, "id")
+    assert hasattr(instance, "id_type")
