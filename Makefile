@@ -52,7 +52,7 @@ lint: ## check style with flake8
 	flake8 src/linux_info tests
 
 test: ## run tests quickly with the default Python
-	pytest -v
+	python -m pytest
 
 coverage:
 	pytest -v --cov
