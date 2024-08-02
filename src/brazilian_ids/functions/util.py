@@ -1,4 +1,7 @@
-"""Helper to validate identifiers."""
+"""Helper to validate identifiers.
+
+For internal use only.
+"""
 
 import re
 

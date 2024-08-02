@@ -4,27 +4,16 @@ A Python 3 package that provides functions and classes to validate several Brazi
 
 ## Documentation
 
-Current features:
+Current IDs:
 
-```
-.
-└── functions
-    ├── company
-    │   └── cnpj.py
-    ├── exceptions.py
-    ├── labor_dispute
-    │   └── nupj.py
-    ├── location
-    │   ├── cep.py
-    │   └── municipio.py
-    ├── person
-    │   ├── cpf.py
-    │   └── pis_pasep.py
-    ├── real_state
-    │   ├── cno.py
-    │   └── sql.py
-    └── util.py
-```
+- CNPJ
+- Numeração única de processo judicial
+- CEP
+- Município
+- CPF
+- PIS/PASEP
+- CNO
+- SQL
 
 ## To do
 

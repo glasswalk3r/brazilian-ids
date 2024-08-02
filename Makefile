@@ -74,7 +74,7 @@ bump:
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/modules.rst
-	sphinx-apidoc --ext-autodoc -o docs/source src/linux_info
+	sphinx-apidoc --implicit-namespaces --module-first --ext-autodoc -o docs/source src/brazilian_ids
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/build/html/index.html
