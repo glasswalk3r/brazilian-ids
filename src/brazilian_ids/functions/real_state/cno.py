@@ -9,8 +9,8 @@ the functions are the same.
 
 See also:
 
-- `CEI <https://www.gov.br/receitafederal/pt-br/assuntos/orientacao-tributaria/cadastros/cei>`
-- `CNO <http://normas.receita.fazenda.gov.br/sijut2consulta/link.action?idAto=122299#2314933>`
+- `CEI <https://www.gov.br/receitafederal/pt-br/assuntos/orientacao-tributaria/cadastros/cei>`_
+- `CNO <http://normas.receita.fazenda.gov.br/sijut2consulta/link.action?idAto=122299#2314933>`_
 """
 
 from random import randint

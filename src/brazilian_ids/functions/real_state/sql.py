@@ -81,7 +81,7 @@ def verification_digit(sql: str, validate_length: bool = False) -> str:
 
 
 def format(sql: str) -> str:
-    """Format the SQL string as 'NNN.NNN.NNNN-N'.
+    """Format the SQL string as ``NNN.NNN.NNNN-N``.
 
     If you have a SQL which length is less than ``EXPECTED_DIGITS``, than use
     ``pad`` with it before calling format to avoid the ``InvalidSqlError``
@@ -96,7 +96,8 @@ def format(sql: str) -> str:
 
 
 def pad(sql: str) -> str:
-    """Includes 0 at the left of a SQL that length is less than EXPECTED_DIGITS."""
+    """Includes 0 at the left of a SQL that length is less than
+    ``EXPECTED_DIGITS``."""
     sql = NONDIGIT_REGEX.sub("", sql)
 
     if len(sql) < EXPECTED_DIGITS:

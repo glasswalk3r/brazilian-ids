@@ -68,7 +68,7 @@ def verification_digits(cpf: str) -> tuple[int, int]:
     """Find the two check digits that are required to make a CPF valid.
 
     If the length of the CPF is less than 9 characters, the
-    InvalidCPFLengthError is raised.
+    ``InvalidCPFLengthError`` is raised.
     """
     cpf = NONDIGIT_REGEX.sub("", cpf)
 

@@ -8,8 +8,8 @@ restricted by captchas to making data scraping more difficult.
 
 See also:
 
-- `Correios <https://pt.wikipedia.org/wiki/Empresa_Brasileira_de_Correios_e_Tel%C3%A9grafos>`
-- `CEP <https://pt.wikipedia.org/wiki/C%C3%B3digo_de_Endere%C3%A7amento_Postal>`
+- `Correios <https://pt.wikipedia.org/wiki/Empresa_Brasileira_de_Correios_e_Tel%C3%A9grafos>`_
+- `CEP <https://pt.wikipedia.org/wiki/C%C3%B3digo_de_Endere%C3%A7amento_Postal>`_
 """
 
 from dataclasses import dataclass

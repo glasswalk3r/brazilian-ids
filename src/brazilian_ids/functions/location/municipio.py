@@ -3,7 +3,7 @@
 Although the municipio code has a verification digit, there are 9 known codes
 where those digits are invalid.
 
-This module contains those municipio codes in the INVALID dict, but they can
+This module contains those municipio codes in the ``INVALID`` dict, but they can
 also be verified at
 http://www.sefaz.al.gov.br/nfe/notas_tecnicas/NT2008.004.pdf.
 """

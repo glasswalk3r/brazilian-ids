@@ -2,7 +2,7 @@
 
 CNPJ means "Cadastro Nacional da Pessoa Jurídica" in Brazilian Portuguese.
 
-See also a the `Wikipedia entry <https://en.wikipedia.org/wiki/CNPJ>` about it
+See also a the `Wikipedia entry <https://en.wikipedia.org/wiki/CNPJ>`_ about it
 for more details.
 """
 
@@ -20,7 +20,7 @@ from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthEr
 
 
 class InvalidCnpjTypeMixin:
-    """Mixin class for CPF errors."""
+    """Mixin class for CNPJ errors."""
 
     def id_type(self):
         return "CNPJ"

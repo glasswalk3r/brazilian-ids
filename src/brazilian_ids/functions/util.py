@@ -1,4 +1,4 @@
-"""Helpers for validating multiple identifiers."""
+"""Helper to validate identifiers."""
 
 import re
 
