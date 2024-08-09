@@ -96,15 +96,19 @@ def format(sql: str) -> str:
 
 
 def pad(sql: str) -> str:
-    """Includes 0 at the left of a SQL that length is less than
+    """Includes 0 at the left of a SQL which length is less than
     ``EXPECTED_DIGITS``."""
+    if len(sql) == 0 or sql == "":
+        raise InvalidSqlError(sql)
+
     sql = NONDIGIT_REGEX.sub("", sql)
 
     if len(sql) < EXPECTED_DIGITS:
         tmp = deque(sql)
-        padded = ["0" for i in range(11)]
+        padded = ["0" for i in range(EXPECTED_DIGITS)]
+        start = EXPECTED_DIGITS - 1
 
-        for i in range(10, 0, -1):
+        for i in range(start, 0, -1):
             if len(tmp) > 0:
                 padded[i] = tmp.pop()
 
