@@ -3,17 +3,111 @@
 Although the municipio code has a verification digit, there are 9 known codes
 where those digits are invalid.
 
-This module contains those municipio codes in the ``INVALID`` dict, but they can
-also be verified at
-http://www.sefaz.al.gov.br/nfe/notas_tecnicas/NT2008.004.pdf.
+This module contains those municipio codes in the ``INVALID`` ``dict``.
+
+See also:
+- `'Nota ténica 2008' <http://www.sefaz.al.gov.br/nfe/notas_tecnicas/NT2008.004.pdf>`_
+- `IBGE <https://www.ibge.gov.br/explica/codigos-dos-municipios.php>`_
 """
 
-from brazilian_ids.functions.real_state.sql import (
-    EXPECTED_DIGITS,
-    EXPECTED_DIGITS_WITHOUT_VERIFICATION,
-)
-from brazilian_ids.functions.util import NONDIGIT_REGEX
-from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthError
+from brazilian_ids.functions.exceptions import InvalidIdLengthError
+
+
+class InvalidMunicipioFederalUnitError(ValueError):
+    def __init__(self, federal_unit):
+        self.code = federal_unit
+        super().__init__(f"The federal unit code '{federal_unit}' is invalid")
+
+
+class Municipio:
+    """Representation of a município based on it's complete code."""
+
+    @staticmethod
+    def federal_units() -> dict[str, str]:
+        return {
+            "11": "Rondônia",
+            "12": "Acre",
+            "13": "Amazonas",
+            "14": "Roraima",
+            "15": "Pará",
+            "16": "Amapá",
+            "17": "Tocantins",
+            "21": "Maranhão",
+            "22": "Piauí",
+            "23": "Ceará",
+            "24": "Rio",
+            "25": "Paraíba",
+            "26": "Pernambuco",
+            "27": "Alagoas",
+            "28": "Sergipe",
+            "29": "Bahia",
+            "31": "Minas",
+            "32": "Espírito",
+            "33": "Rio",
+            "35": "São",
+            "41": "Paraná",
+            "42": "Santa",
+            "43": "Rio",
+            "50": "Mato",
+            "51": "Mato",
+            "52": "Goiás",
+            "53": "Distrito",
+        }
+
+    def __init__(
+        self, unidade_federativa: str, municipio: str, control_digits: str
+    ) -> None:
+        try:
+            self.__federal_unit = self.federal_units()[unidade_federativa]
+        except KeyError as e:
+            raise InvalidMunicipioFederalUnitError(str(e))
+
+        self._fed_unit_code = unidade_federativa
+        self.__muni = municipio
+        self.__digits = control_digits
+
+    @property
+    def federal_unit(self) -> str:
+        """Return the name of the Brazilian UF."""
+        return self.__federal_unit
+
+    @property
+    def federal_unit_code(self) -> str:
+        """Return the code of the 'unidade federativa' (UF), corresponding to one of the
+        Brazil states or the capital."""
+        return self._fed_unit_code
+
+    @property
+    def municipio(self) -> str:
+        """Return the município code."""
+        return self.__muni
+
+    @property
+    def control_digits(self) -> str:
+        """Return the 'control digits' created by IBGE."""
+        return self.__digits
+
+    def __str__(self):
+        return "{0} in {1}".format(
+            self.__muni, self.federal_units()[self._fed_unit_code]
+        )
+
+
+EXPECTED_DIGITS = 7
+
+
+def __split_municipio(municipio: str) -> tuple[str, str, str]:
+    if len(municipio) < EXPECTED_DIGITS:
+        raise InvalidMunicipioLengthError(municipio)
+
+    return (municipio[:2], municipio[2:6], municipio[6:])
+
+
+def parse(municipio: str) -> Municipio:
+    data = __split_municipio(municipio)
+    return Municipio(
+        unidade_federativa=data[0], municipio=data[1], control_digits=data[2]
+    )
 
 
 class InvalidMunicipioTypeMixin:
@@ -23,20 +117,13 @@ class InvalidMunicipioTypeMixin:
         return "município"
 
 
-class InvalidMunicipioError(InvalidMunicipioTypeMixin, InvalidIdError):
-    """Exception for invalid município errors"""
-
-    def __init__(self, municipio: str) -> None:
-        super().__init__(id=municipio)
-
-
 class InvalidMunicipioLengthError(InvalidMunicipioTypeMixin, InvalidIdLengthError):
     """Exception for invalid município length error."""
 
     def __init__(
         self,
         municipio: str,
-        expected_digits: int = EXPECTED_DIGITS_WITHOUT_VERIFICATION,
+        expected_digits: int = EXPECTED_DIGITS,
     ) -> None:
         super().__init__(id=municipio, expected_digits=expected_digits)
 
@@ -53,42 +140,31 @@ INVALID = {
     "5203962": 2,  # Buritinópolis, GO
 }
 
-EXPECTED_DIGITS = 7
-EXPECTED_DIGITS_WITHOUT_VERIFICATION = 6
-
 
 def is_valid(municipio: str) -> bool:
-    """Check whether município code is valid."""
-    municipio = NONDIGIT_REGEX.sub("", municipio)
+    """Check whether município code is valid.
 
+    It's hard to check if a code is valid completely since the control digits
+    are defined internally by IBGE and, to this date, there are 5,570
+    municípios in Brazil.
+
+    This function tries to check more basic aspects that are possible without
+    copying a large amount of text to the Python code.
+
+    Also, those codes are always changing.
+    """
     if len(municipio) != EXPECTED_DIGITS:
         return False
 
     if municipio[0] == "0":
         return False
 
-    valid = verification_digit(municipio[:-1]) == municipio[-1]
-    return valid or municipio in INVALID  # need to check exceptions list
+    if municipio in INVALID.keys():  # need to check exceptions list
+        return True
 
+    try:
+        code = parse(municipio)
+    except InvalidMunicipioFederalUnitError:
+        return False
 
-def verification_digit(municipio: str, validate_length: bool = False) -> int:
-    """Calculate the verification digit needed to make a valid municipio code."""
-    municipio = NONDIGIT_REGEX.sub("", municipio)
-
-    if validate_length:
-        if len(municipio) < EXPECTED_DIGITS_WITHOUT_VERIFICATION:
-            raise InvalidMunicipioLengthError(municipio)
-
-    if municipio in INVALID:
-        return INVALID[municipio]
-
-    digits = [int(k) for k in municipio[:7]]
-    weights = [1, 2, 1, 2, 1, 2]
-    digmul = (w * d for w, d in zip(weights, digits))
-    digsum = sum(n if n < 10 else 1 + (n % 10) for n in digmul)
-    modulo = digsum % 10
-
-    if modulo == 0:
-        return 0
-
-    return 10 - modulo
+    return True
