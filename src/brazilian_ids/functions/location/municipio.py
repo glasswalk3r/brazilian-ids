@@ -57,12 +57,21 @@ class Municipio:
     def __init__(
         self, unidade_federativa: str, municipio: str, control_digits: str
     ) -> None:
+        if len(unidade_federativa) != 2:
+            raise ValueError("Federal unit must have two digits")
+
+        if len(municipio) != 3:
+            raise ValueError("Municipio must have 3 digits")
+
+        if len(control_digits) != 2:
+            raise ValueError("The control digits must be 2")
+
         try:
             self.__federal_unit = self.federal_units()[unidade_federativa]
         except KeyError as e:
             raise InvalidMunicipioFederalUnitError(str(e))
 
-        self._fed_unit_code = unidade_federativa
+        self.__fed_unit_code = unidade_federativa
         self.__muni = municipio
         self.__digits = control_digits
 
@@ -75,7 +84,7 @@ class Municipio:
     def federal_unit_code(self) -> str:
         """Return the code of the 'unidade federativa' (UF), corresponding to one of the
         Brazil states or the capital."""
-        return self._fed_unit_code
+        return self.__fed_unit_code
 
     @property
     def municipio(self) -> str:
@@ -87,9 +96,28 @@ class Municipio:
         """Return the 'control digits' created by IBGE."""
         return self.__digits
 
+    def __eq__(self, other: object) -> bool:
+        if (
+            not hasattr(other, "federal_unit_code")
+            or not hasattr(other, "municipio")
+            or not hasattr(other, "control_digits")
+        ):
+            return False
+
+        return (
+            self.federal_unit_code == other.federal_unit_code
+            and self.municipio == other.municipio
+            and self.control_digits == other.control_digits
+        )
+
     def __str__(self):
         return "{0} in {1}".format(
             self.__muni, self.federal_units()[self._fed_unit_code]
+        )
+
+    def __repr__(self):
+        return 'Municipio(unidade_federativa="{0}", municipio="{1}", control_digits="{2}")'.format(
+            self.__fed_unit_code, self.__muni, self.__digits
         )
 
 
@@ -100,7 +128,7 @@ def __split_municipio(municipio: str) -> tuple[str, str, str]:
     if len(municipio) < EXPECTED_DIGITS:
         raise InvalidMunicipioLengthError(municipio)
 
-    return (municipio[:2], municipio[2:6], municipio[6:])
+    return (municipio[:2], municipio[2:5], municipio[5:])
 
 
 def parse(municipio: str) -> Municipio:
@@ -163,7 +191,7 @@ def is_valid(municipio: str) -> bool:
         return True
 
     try:
-        code = parse(municipio)
+        parse(municipio)
     except InvalidMunicipioFederalUnitError:
         return False
 
