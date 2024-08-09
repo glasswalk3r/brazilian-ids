@@ -1,7 +1,15 @@
 import pytest
 
-from brazilian_ids.functions.labor_dispute.nupj import is_valid, parse, pad, NUPJ
+from brazilian_ids.functions.labor_dispute.nupj import (
+    is_valid,
+    parse,
+    pad,
+    NUPJ,
+    Court,
+    Courts,
+)
 
+# NUPJ generator
 # https://processogerador.paulosales.com.br/
 
 
