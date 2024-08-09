@@ -37,7 +37,7 @@ Homepage = "https://github.com/glasswalk3r/brazilian-ids"
 Repository = "https://github.com/glasswalk3r/brazilian-ids.git"
 Issues = "https://github.com/glasswalk3r/brazilian-ids/issues"
 
-[tools.setuptools.package-data]
+[tool.setuptools.package-data]
 "brazilian_ids" = ["py.typed"]
 
 [tool.pytest.ini_options]
