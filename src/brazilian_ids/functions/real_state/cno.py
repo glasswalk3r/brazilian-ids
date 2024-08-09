@@ -48,7 +48,7 @@ def is_valid(cno: str, autopad: bool = True) -> bool:
     if len(cno) < 12:
         if not autopad:
             return False
-        cei = pad(cno)
+        cno = pad(cno)
 
     elif len(cno) > 12:
         return False

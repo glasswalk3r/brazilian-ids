@@ -1,5 +1,3 @@
-import pytest
-
 from brazilian_ids.functions.exceptions import InvalidIdLengthError
 from brazilian_ids.functions.location.municipio import (
     InvalidMunicipioLengthError,

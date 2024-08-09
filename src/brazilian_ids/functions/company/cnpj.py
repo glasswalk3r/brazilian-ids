@@ -6,15 +6,8 @@ See also a the `Wikipedia entry <https://en.wikipedia.org/wiki/CNPJ>`_ about it
 for more details.
 """
 
-from calendar import c
-from http.client import EXPECTATION_FAILED
 from random import randint, choice
 from dataclasses import dataclass
-
-from brazilian_ids.functions.real_state.sql import (
-    EXPECTED_DIGITS,
-    EXPECTED_DIGITS_WITHOUT_VERIFICATION,
-)
 from brazilian_ids.functions.util import NONDIGIT_REGEX
 from brazilian_ids.functions.exceptions import InvalidIdError, InvalidIdLengthError
 
@@ -29,6 +22,10 @@ class InvalidCnpjTypeMixin:
 class InvalidCnpjError(InvalidCnpjTypeMixin, InvalidIdError):
     def __init__(self, cnpj: str) -> None:
         super().__init__(id=cnpj)
+
+
+EXPECTED_DIGITS = 14
+EXPECTED_DIGITS_WITHOUT_VERIFICATION = 12
 
 
 class InvalidCnpjLengthError(InvalidCnpjTypeMixin, InvalidIdLengthError):
@@ -64,8 +61,6 @@ class CNPJ:
 
 CNPJ_FIRST_WEIGHTS = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
 CNPJ_SECOND_WEIGHTS = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-EXPECTED_DIGITS = 14
-EXPECTED_DIGITS_WITHOUT_VERIFICATION = 12
 
 
 def is_valid(cnpj: str, autopad: bool = True) -> bool:

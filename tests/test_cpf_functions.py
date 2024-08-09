@@ -52,9 +52,8 @@ def test_format(read_csv):
 
 def test_verification_digits(read_csv):
     for cpf in read_csv:
-        length_raw = len(cpf.raw_cpf)
-        trimmed = cpf.raw_cpf[:-2]
-        expected_digits = cpf.raw_cpf[(length_raw - 2) :]
+        length_raw = len(cpf.raw_cpf) - 2
+        expected_digits = cpf.raw_cpf[length_raw:]
         assert verification_digits(cpf.raw_cpf) == (
             int(expected_digits[0]),
             int(expected_digits[1]),
