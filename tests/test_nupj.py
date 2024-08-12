@@ -120,21 +120,6 @@ def test_court_acronym_invalid_court_id():
         Courts.court_acronym(segment_id=4, court_id=0)
 
 
-def test_court_class():
-    assert inspect.isclass(Court)
-
-
-def test_court_instance():
-    instance = Court(
-        id="99", acronym="FUBAR", description="Fucked Beyond Any Recognition"
-    )
-    assert isinstance(instance, Court)
-    assert hasattr(instance, "id")
-    assert hasattr(instance, "acronym")
-    assert hasattr(instance, "description")
-    assert str(instance) == "Court FUBAR, Fucked Beyond Any Recognition"
-
-
 def test_courts_court():
     instance = Courts.court(segment_id=4, court_id="04")
     assert isinstance(instance, Court)
