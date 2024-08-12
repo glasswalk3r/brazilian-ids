@@ -23,9 +23,14 @@ from brazilian_ids.functions.exceptions import InvalidIdError
 class InvalidCourtIdError(ValueError):
     def __init__(self, court_id: int) -> None:
         self.court_id = court_id
-        msg = "The court_id {0} is invalid: it must be between 1 and {1}".format(
-            court_id, Courts.total_courts()
-        )
+        msg = f"The court_id '{court_id}' is invalid"
+        super().__init__(self, msg)
+
+
+class InvalidSegmentIdError(ValueError):
+    def __init__(self, segment_id: int) -> None:
+        self.court_id = segment_id
+        msg = f"The segment_id '{segment_id}' is invalid"
         super().__init__(self, msg)
 
 
@@ -44,14 +49,9 @@ class InvalidNupjError(InvalidNupjTypeMixin, InvalidIdError):
 
 
 class Court:
-    def __init__(self, id: int, acronym: str) -> None:
+    def __init__(self, id: str, acronym: str, description: str) -> None:
         if id == 0:
-            raise InvalidCourtIdError(id)
-
-        try:
-            description = self.__courts[id]
-        except IndexError:
-            raise InvalidCourtIdError(id)
+            raise InvalidCourtIdError(court_id=id)
 
         self.__id = id
         self.__acronym = acronym
@@ -70,161 +70,235 @@ class Court:
         return self.__description
 
     def __str__(self):
-        return f"{self.__acronym}: {self.__description}"
+        return f"Court {self.__acronym}, {self.__description}"
 
-
-SEGMENTS = (
-    None,
-    "Supremo Tribunal Federal",
-    "Conselho Nacional de Justiça",
-    "Superior Tribunal de Justiça",
-    "Justiça Federal",
-    "Justiça do Trabalho",
-    "Justiça Eleitoral",
-    "Justiça Militar da União",
-    "Justiça dos Estados e do Distrito Federal e Territórios",
-    "Justiça Militar Estadual",
-)
+    def __repr__(self):
+        return f'Court(id={self.__id}, acronym="{self.__acronym}", description="{self.description}")'
 
 
 class Courts:
-    # segments IDs are the keys, see SEGMENTS
-    __courts = {
-        4: (
-            None,
-            "Tribunal Regional Federal da 1ª Região",
-            "Tribunal Regional Federal da 2ª Região",
-            "Tribunal Regional Federal da 3ª Região",
-            "Tribunal Regional Federal da 4ª Região",
-            "Tribunal Regional Federal da 5ª Região",
-            "Tribunal Regional Federal da 6ª Região",
-        ),
-        5: (
-            None,
-            "Tribunal Regional do Trabalho da 1ª Região - Rio de Janeiro",
-            "Tribunal Regional do Trabalho da 2ª Região - São Paulo",
-            "Tribunal Regional do Trabalho da 3ª Região - Belo Horizonte",
-            "Tribunal Regional do Trabalho da 4ª Região - Porto Alegre",
-            "Tribunal Regional do Trabalho da 5ª Região - Salvador",
-            "Tribunal Regional do Trabalho da 6ª Região - Recife",
-            "Tribunal Regional do Trabalho da 7ª Região - Fortaleza",
-            "Tribunal Regional do Trabalho da 8ª Região - Belém",
-            "Tribunal Regional do Trabalho da 9ª Região - Curitiba",
-            "Tribunal Regional do Trabalho da 10ª Região - Brasília",
-            "Tribunal Regional do Trabalho da 11ª Região - Manaus",
-            "Tribunal Regional do Trabalho da 12ª Região - Florianópolis",
-            "Tribunal Regional do Trabalho da 13ª Região - João Pessoa",
-            "Tribunal Regional do Trabalho da 14ª Região - Porto Velho",
-            "Tribunal Regional do Trabalho da 15ª Região - Campinas",
-            "Tribunal Regional do Trabalho da 16ª Região - São Luiz",
-            "Tribunal Regional do Trabalho da 17ª Região - Vitória",
-            "Tribunal Regional do Trabalho da 18ª Região - Goiânia",
-            "Tribunal Regional do Trabalho da 19ª Região - Maceió",
-            "Tribunal Regional do Trabalho da 20ª Região - Aracaju",
-            "Tribunal Regional do Trabalho da 21ª Região - Natal",
-            "Tribunal Regional do Trabalho da 22ª Região - Teresina",
-            "Tribunal Regional do Trabalho da 23ª Região - Cuiabá",
-            "Tribunal Regional do Trabalho da 24ª Região - Campo Grande",
-        ),
-        6: (
-            None,
-            "Tribunal Regional Eleitoral do Acre",
-            "Tribunal Regional Eleitoral de Alagoas",
-            "Tribunal Regional Eleitoral da Amazonas",
-            "Tribunal Regional Eleitoral da Bahia",
-            "Tribunal Regional Eleitoral do Ceará",
-            "Tribunal Regional Eleitoral do Distrito Federal",
-            "Tribunal Regional Eleitoral do Espírito Santo",
-            "Tribunal Regional Eleitoral de Goiás",
-            "Tribunal Regional Eleitoral do Maranhão",
-            "Tribunal Regional Eleitoral do Mato Grosso",
-            "Tribunal Regional Eleitoral do Mato Grosso do Sul",
-            "Tribunal Regional Eleitoral de Minas Gerais",
-            "Tribunal Regional Eleitoral do Pará",
-            "Tribunal Regional Eleitoral da Paraíba",
-            "Tribunal Regional Eleitoral do Paraná",
-            "Tribunal Regional Eleitoral de Pernambuco",
-            "Tribunal Regional Eleitoral do Piauí",
-            "Tribunal Regional Eleitoral do Rio de Janeiro",
-            "Tribunal Regional Eleitoral do Rio Grande do Norte",
-            "Tribunal Regional Eleitoral do Rio Grande do Sul",
-            "Tribunal Regional Eleitoral de Rondônia",
-            "Tribunal Regional Eleitoral de Roraima",
-            "Tribunal Regional Eleitoral de Santa Catarina",
-            "Tribunal Regional Eleitoral de São Paulo",
-            "Tribunal Regional Eleitoral de Sergipe",
-            "Tribunal Regional Eleitoral do Tocantins",
-            "Tribunal Regional Eleitoral do Maranhão",
-        ),
-        7: (
-            None,
-            "Circunscrição Judiciária Militar do Estado de São Paulo (1ª Região)",
-            "Circunscrição Judiciária Militar do Estado do Rio de Janeiro (2ª Região)",
-            "Circunscrição Judiciária Militar do Estado de Minas Gerais (3ª Região)",
-            "Circunscrição Judiciária Militar do Estado do Rio Grande do Sul (4ª Região)",
-            "Circunscrição Judiciária Militar do Estado de Pernambuco (5ª Região)",
-            "Circunscrição Judiciária Militar do Estado do Pará (6ª Região)",
-            "Circunscrição Judiciária Militar do Estado da Bahia (7ª Região)",
-            "Circunscrição Judiciária Militar do Estado do Espírito Santo (8ª Região)",
-            "Circunscrição Judiciária Militar do Estado do Ceará (9ª Região)",
-            "Circunscrição Judiciária Militar do Estado do Maranhão (10ª Região)",
-            "Circunscrição Judiciária Militar do Estado do Mato Grosso (11ª Região)",
-            "Circunscrição Judiciária Militar do Estado de Goiás (12ª Região)",
-        ),
-        8: (
-            None,
-            "Tribunal de Justiça do Acre",
-            "Tribunal de Justiça de Alagoas",
-            "Tribunal de Justiça do Amazonas",
-            "Tribunal de Justiça da Bahia",
-            "Tribunal de Justiça do Ceará",
-            "Tribunal de Justiça do Distrito Federal e Territórios",
-            "Tribunal de Justiça do Espírito Santo",
-            "Tribunal de Justiça de Goiás",
-            "Tribunal de Justiça do Maranhão",
-            "Tribunal de Justiça do Mato Grosso",
-            "Tribunal de Justiça do Mato Grosso do Sul",
-            "Tribunal de Justiça de Minas Gerais",
-            "Tribunal de Justiça do Pará",
-            "Tribunal de Justiça da Paraíba",
-            "Tribunal de Justiça do Paraná" "Tribunal de Justiça de Pernambuco",
-            "Tribunal de Justiça do Piauí" "Tribunal de Justiça do Rio de Janeiro",
-            "Tribunal de Justiça do Rio Grande do Norte",
-            "Tribunal de Justiça do Rio Grande do Sul",
-            "Tribunal de Justiça de Rondônia",
-            "Tribunal de Justiça de Roraima",
-            "Tribunal de Justiça de Santa Catarina",
-            "Tribunal de Justiça de São Paulo",
-            "Tribunal de Justiça de Sergipe",
-            "Tribunal de Justiça do Tocantins",
-            "Tribunal de Justiça do Maranhão",
-        ),
+    """Class factory to build court instances based on rules.
+
+    Although all digits from a NUPJ are strings, for segment an integer is
+    expected instead, since this data type is shorter in bytes and well suited
+    for the context.
+    """
+
+    __segments = (
+        None,
+        "Supremo Tribunal Federal",
+        "Conselho Nacional de Justiça",
+        "Superior Tribunal de Justiça",
+        "Justiça Federal",
+        "Justiça do Trabalho",
+        "Justiça Eleitoral",
+        "Justiça Militar da União",
+        "Justiça dos Estados e do Distrito Federal e Territórios",
+        "Justiça Militar Estadual",
+    )
+
+    __courts_descriptions_prefix = {
+        4: "Tribunal Regional Federal da",
+        5: "Tribunal Regional do Trabalho da",
+        6: "Tribunal Regional Eleitoral",
+        7: "Circunscrição Judiciária Militar da",
+        8: "Tribunal de Justiça",
+        9: "Tribunal de Justiça Militar",
+    }
+
+    __unknown_court = {"00": ("N/D", "Não Disponível")}
+
+    __segments_courts = {
+        1: __unknown_court,
+        2: __unknown_court,
+        3: __unknown_court,
+        4: {
+            "01": ("TRF01", "1ª Região"),
+            "02": ("TRF02", "2ª Região"),
+            "03": ("TRF03", "3ª Região"),
+            "04": ("TRF04", "4ª Região"),
+            "05": ("TRF05", "5ª Região"),
+            "06": ("TRF06", "6ª Região"),
+        },
+        5: {
+            "01": ("TRT06", "1ª Região - Rio de Janeiro"),
+            "02": ("TRT02", "2ª Região - São Paulo"),
+            "03": ("TRT03", "3ª Região - Belo Horizonte"),
+            "04": ("TRT04", "4ª Região - Porto Alegre"),
+            "05": ("TRT05", "5ª Região - Salvador"),
+            "06": ("TRT06", "6ª Região - Recife"),
+            "07": ("TRT07", "7ª Região - Fortaleza"),
+            "08": ("TRT08", "8ª Região - Belém"),
+            "09": ("TRT09", "9ª Região - Curitiba"),
+            "10": ("TRT10", "10ª Região - Brasília"),
+            "11": ("TRT11", "11ª Região - Manaus"),
+            "12": ("TRT12", "12ª Região - Florianópolis"),
+            "13": ("TRT13", "13ª Região - João Pessoa"),
+            "14": ("TRT14", "14ª Região - Porto Velho"),
+            "15": ("TRT15", "15ª Região - Campinas"),
+            "16": ("TRT16", "16ª Região - São Luiz"),
+            "17": ("TRT17", "17ª Região - Vitória"),
+            "18": ("TRT18", "18ª Região - Goiânia"),
+            "19": ("TRT19", "19ª Região - Maceió"),
+            "20": ("TRT20", "20ª Região - Aracaju"),
+            "21": ("TRT21", "21ª Região - Natal"),
+            "22": ("TRT22", "22ª Região - Teresina"),
+            "23": ("TRT23", "23ª Região - Cuiabá"),
+            "24": ("TRT24", "24ª Região - Campo Grande"),
+        },
+        6: {
+            "01": ("TRE-AC", "do Acre"),
+            "02": ("TRE-AL", "de Alagoas"),
+            "03": ("TRE-AM", "da Amazonas"),
+            "04": ("TRE-BA", "da Bahia"),
+            "05": ("TRE-CE", "do Ceará"),
+            "06": ("TRE-DF", "do Distrito Federal"),
+            "07": ("TRE-ES", "do Espírito Santo"),
+            "08": ("TRE-GO", "de Goiás"),
+            "09": ("TRE-MA", "do Maranhão"),
+            "10": ("TRE-MT", "do Mato Grosso"),
+            "11": ("TRE-MS", "do Mato Grosso do Sul"),
+            "12": ("TRE-MG", "de Minas Gerais"),
+            "13": ("TRE-PA", "do Pará"),
+            "14": ("TRE-PB", "da Paraíba"),
+            "15": ("TRE-PR", "do Paraná"),
+            "16": ("TRE-PE", "de Pernambuco"),
+            "17": ("TRE-PI", "do Piauí"),
+            "18": ("TRE-RJ", "do Rio de Janeiro"),
+            "19": ("TRE-RN", "do Rio Grande do Norte"),
+            "20": ("TRE-RS", "do Rio Grande do Sul"),
+            "21": ("TRE-RO", "de Rondônia"),
+            "22": ("TRE-RR", "de Roraima"),
+            "23": ("TRE-SC", "de Santa Catarina"),
+            "24": ("TRE-SP", "de São Paulo"),
+            "25": ("TRE-SE", "de Sergipe"),
+            "26": ("TRE-TO", "do Tocantins"),
+        },
+        7: {
+            "01": ("CJM-1", "1ª Região (Brasília)"),
+            "02": (
+                "CJM-2",
+                "2ª Região (São Paulo)",
+            ),
+            "03": (
+                "CJM-3",
+                "3ª Região (Minas Gerais)",
+            ),
+            "04": (
+                "CJM-4",
+                "4ª Região (Rio de Janeiro)",
+            ),
+            "05": ("CJM-5", "5ª Região (Belém)"),
+            "06": ("CJM-6", "6ª Região (Recife)"),
+            "07": ("CJM-7", "7ª Região (Salvador)"),
+            "08": (
+                "CJM-8",
+                "8ª Região (Porto Alegre)",
+            ),
+            "09": ("CJM-9", "9ª Região (Manaus)"),
+            "10": (
+                "CJM-10",
+                "10ª Região (Fortaleza)",
+            ),
+            "11": (
+                "CJM-11",
+                "11ª Região (Campo Grande)",
+            ),
+            "12": (
+                "CJM-12",
+                "12ª Região (Curitiba)",
+            ),
+        },
+        8: {
+            "01": ("TJAC", "do Acre"),
+            "02": ("TJAL", "de Alagoas"),
+            "03": ("TJAP", "do Amapá"),
+            "04": ("TJAM", "do Amazonas"),
+            "05": ("TJBA", "da Bahia"),
+            "06": ("TJCE", "do Ceará"),
+            "07": ("TJDF", "do Distrito Federal e Territórios"),
+            "08": ("TJES", "do Espírito Santo"),
+            "09": ("TJGO", "de Goiás"),
+            "10": ("TJMA", "do Maranhão"),
+            "11": ("TJMT", "do Mato Grosso"),
+            "12": ("TJMS", "do Mato Grosso do Sul"),
+            "13": ("TJMG", "de Minas Gerais"),
+            "14": ("TJPA", "do Pará"),
+            "15": ("TJPB", "da Paraíba"),
+            "16": ("TJPR", "do Paraná"),
+            "17": ("TJPE", "de Pernambuco"),
+            "18": ("TJPI", "do Piauí"),
+            "19": ("TJRJ", "do Rio de Janeiro"),
+            "20": ("TJRN", "do Rio Grande do Norte"),
+            "21": ("TJRS", "do Rio Grande do Sul"),
+            "22": ("TJRO", "de Rondônia"),
+            "23": ("TJRR", "de Roraima"),
+            "24": ("TJSC", "de Santa Catarina"),
+            "25": ("TJSP", "de São Paulo"),
+            "26": ("TJSE", "de Sergipe"),
+            "27": ("TJTO", "do Tocantins"),
+        },
         9: {
-            13: "Tribunal Militar de Minas Gerais",
-            21: "Tribunal Militar do Rio Grande do Sul",
-            26: "Tribunal Militar de São Paulo",
+            "13": ("TJMMG", "de Minas Gerais"),
+            "21": ("TJMSP", "do Rio Grande do Sul"),
+            "26": ("TJMRS", "de São Paulo"),
         },
     }
 
     @classmethod
-    def court_acronym(klass, segment: int, court_id: int) -> str:
-        if court_id == 0:
-            raise InvalidCourtIdError(court_id)
+    def __court(klass, segment_id: int, court_id: str) -> str:
+        if klass.__segments[segment_id] is None:
+            raise InvalidSegmentIdError(segment_id)
 
         try:
-            acronym = klass.__courts[court_id]
-        except IndexError:
+            courts = klass.__segments_courts[segment_id]
+        except IndexError as e:
+            raise InvalidSegmentIdError(e)
+
+        try:
+            court = courts[court_id]
+        except KeyError as e:
+            raise InvalidCourtIdError(e)
+
+        if court is None:
             raise InvalidCourtIdError(court_id)
 
-        return acronym
+        return court
 
     @classmethod
-    def court(klass, court_id: int) -> Court:
-        return Court(id=court_id, acronym=klass.court_acronym(court_id))
+    def court_acronym(klass, segment_id: int, court_id: str) -> str:
+        """Return a court acronym, based on segment and court ID."""
+        court = klass.__court(segment_id=segment_id, court_id=court_id)
+        return court[0]
+
+    @classmethod
+    def court(klass, segment_id: int, court_id: str) -> Court:
+        court = klass.__court(segment_id=segment_id, court_id=court_id)
+        return Court(
+            id=court_id,
+            acronym=court[0],
+            description="{0} {1}".format(
+                klass.__courts_descriptions_prefix[segment_id], court[1]
+            ),
+        )
 
     @classmethod
     def total_courts(klass) -> int:
-        return len(klass.__courts)
+        return len(klass.__segments_courts)
+
+    @classmethod
+    def segment(klass, id: int) -> str:
+        try:
+            description = klass.__segments[id]
+        except IndexError as e:
+            raise InvalidSegmentIdError(e)
+        except KeyError as e:
+            raise InvalidSegmentIdError(e)
+
+        if description is None:
+            raise InvalidSegmentIdError(id)
+
+        return description
 
 
 @dataclass
@@ -333,7 +407,7 @@ def is_valid(nupj: str) -> bool:
         return False
 
     try:
-        result = SEGMENTS[parsed.segment]
+        result = Courts.segment(parsed.segment)
     except IndexError:
         return False
     else:
