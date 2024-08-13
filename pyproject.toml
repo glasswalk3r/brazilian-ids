@@ -14,18 +14,33 @@ readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Operating System :: OS Independent",
     "Development Status :: 4 - Beta",
-    "Intended Audience :: Developers",
     "Topic :: Utilities",
 ]
 
-keywords = ["brazil", "brasil", "cnpj", "cei", "cpf", "pis", "pasep", "cep"]
+keywords = [
+    "brazil",
+    "brasil",
+    "cnpj",
+    "cno",
+    "cpf",
+    "pis",
+    "pasep",
+    "cep",
+    "municipio",
+    "sql",
+    "processo",
+    "jurídico",
+]
 
 dependencies = []
 
