@@ -22,14 +22,14 @@ from brazilian_ids.functions.exceptions import InvalidIdError
 
 class InvalidCourtIdError(ValueError):
     def __init__(self, court_id: int) -> None:
-        self.court_id = court_id
+        self.id = court_id
         msg = f"The court_id '{court_id}' is invalid"
         super().__init__(self, msg)
 
 
 class InvalidSegmentIdError(ValueError):
     def __init__(self, segment_id: int) -> None:
-        self.court_id = segment_id
+        self.id = segment_id
         msg = f"The segment_id '{segment_id}' is invalid"
         super().__init__(self, msg)
 
