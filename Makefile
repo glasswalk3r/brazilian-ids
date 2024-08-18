@@ -33,14 +33,14 @@ clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
+	find . -name '*.egg-info' -delete
+	find . -name '*.egg' -delete
 
 clean-pyc: ## remove Python file artifacts
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
+	find . -name '*.pyc' -delete
+	find . -name '*.pyo' -delete
+	find . -name '*~' -delete
+	find . -name '__pycache__' | xargs rm -rf
 
 clean-test: ## remove test and coverage artifacts
 	rm -fr .tox/
@@ -58,7 +58,7 @@ coverage:
 	pytest -v --cov
 
 release: dist ## package and upload a release
-	twine upload dist/*
+	python -m twine upload dist/*
 
 dist: clean ## builds source and wheel package
 	python -m build
