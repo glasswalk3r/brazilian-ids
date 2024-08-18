@@ -8,8 +8,8 @@ def test_invalid_cpf_error_class():
 
 def test_invalid_cpf_error_instance():
     instance = InvalidCpfError("1234")
-    assert hasattr(instance, "id")
-    assert instance.id == "1234"
+    assert hasattr(instance, "id_")
+    assert instance.id_ == "1234"
 
 
 def test_invalid_cpf_error_custom():

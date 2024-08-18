@@ -12,10 +12,10 @@ class InvalidIdError(ValueError):
         pass
 
     def __init__(self, id: str, message: None | str = None) -> None:
-        self.id = id
+        self.id_ = id
 
         if message is None:
-            msg = f"The {self.id_type()} '{self.id}' is invalid"
+            msg = f"The {self.id_type()} '{self.id_}' is invalid"
             super().__init__(msg)
         else:
             super().__init__(message)

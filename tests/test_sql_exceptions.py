@@ -20,10 +20,10 @@ def test_invalid_sql_error_class():
 def test_invalid_sql_error_instance(invalid_sql):
     instance = InvalidSqlError(invalid_sql)
     assert isinstance(instance, InvalidSqlError)
-    assert hasattr(instance, "id")
+    assert hasattr(instance, "id_")
     assert hasattr(instance, "id_type")
     assert instance.id_type() == "SQL"
-    assert instance.id == invalid_sql
+    assert instance.id_ == invalid_sql
 
 
 def test_invalid_sql_length_error_class():
@@ -33,7 +33,7 @@ def test_invalid_sql_length_error_class():
 def test_invalid_sql_length_error_instance(invalid_sql):
     instance = InvalidSqlLengthError(sql=invalid_sql, expected_digits=EXPECTED_DIGITS)
     assert isinstance(instance, InvalidSqlLengthError)
-    assert hasattr(instance, "id")
+    assert hasattr(instance, "id_")
     assert hasattr(instance, "id_type")
     assert instance.id_type() == "SQL"
-    assert instance.id == invalid_sql
+    assert instance.id_ == invalid_sql

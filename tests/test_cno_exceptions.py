@@ -12,7 +12,7 @@ def test_invalid_cno_error_class():
 def test_invalid_cno_error_instance():
     instance = InvalidCnoError("1234")
     assert isinstance(instance, InvalidCnoError)
-    assert hasattr(instance, "id")
+    assert hasattr(instance, "id_")
     assert hasattr(instance, "id_type")
 
 
@@ -23,5 +23,5 @@ def test_invalid_cno_error_length_class():
 def test_invalid_cno_error_length_instance():
     instance = InvalidCnoLengthError(cno="1234")
     assert isinstance(instance, InvalidCnoLengthError)
-    assert hasattr(instance, "id")
+    assert hasattr(instance, "id_")
     assert hasattr(instance, "id_type")

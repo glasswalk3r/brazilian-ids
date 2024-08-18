@@ -31,6 +31,6 @@ def test_instance(klass, error_piece):
     instance = klass(invalid_id)
     assert isinstance(instance, klass)
     assert hasattr(instance, "id_type")
-    assert instance.id == invalid_id
+    assert instance.id_ == invalid_id
     assert instance.id_type() == "CNPJ"
     assert str(instance).find(error_piece) != -1
