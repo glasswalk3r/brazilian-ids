@@ -70,7 +70,7 @@ init:
 	pip install --upgrade pip
 	pip install --upgrade -r requirements-dev.txt
 bump:
-	bump2version --tag patch
+	bump-my-version bump patch
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/modules.rst
