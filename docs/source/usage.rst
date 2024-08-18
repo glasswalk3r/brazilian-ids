@@ -14,7 +14,7 @@ To use ``brazilian_ids`` package, first install it using ``pip``:
 Selecting a function
 --------------------
 
-Functions are organized per package domain:
+Functions are organized per package/domain:
 
 - company
 - labor dispute
@@ -27,7 +27,6 @@ Functions are organized per package domain:
    └── functions
       ├── company
       │  └── cnpj
-      ├── exceptions
       ├── labor_dispute
       │  └── nupj
       ├── location
