@@ -15,7 +15,7 @@ See also:
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class CEP:
     """Representation of a CEP.
 
