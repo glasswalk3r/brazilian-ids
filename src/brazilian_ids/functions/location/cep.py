@@ -23,12 +23,55 @@ class CEP:
     """
 
     formatted_cep: str
-    region: str
-    sub_region: str
-    sector: str
-    sub_sector: str
-    division: str
+    region: int
+    sub_region: int
+    sector: int
+    sub_sector: int
+    division: int
     suffix: str
+
+    def __ge__(self, other):
+        test_sequence = ("region", "sub_region", "sub_sector", "division")
+
+        for digit in test_sequence:
+            if getattr(self, digit) > getattr(other, digit):
+                return True
+            elif getattr(self, digit) == getattr(other, digit):
+                continue
+            else:
+                return False
+
+        a = int(self.suffix)
+        b = int(other.suffix)
+
+        return a >= b
+
+    def __le__(self, other):
+        test_sequence = ("region", "sub_region", "sub_sector", "division")
+
+        for digit in test_sequence:
+            if getattr(self, digit) < getattr(other, digit):
+                return True
+            elif getattr(self, digit) == getattr(other, digit):
+                continue
+            else:
+                return False
+
+        a = int(self.suffix)
+        b = int(other.suffix)
+
+        return a <= b
+
+
+def is_valid(cep: str, raw: bool = True, digits: int = 0) -> bool:
+    if raw:
+        cep = cep.replace("-", "")
+
+    if digits == 0:
+        digits = len(cep)
+
+    expected = set([4, 5, 7, 8])
+    return digits in expected
 
 
 def format(cep: str) -> str:
@@ -55,11 +98,11 @@ def parse(cep: str) -> CEP:
     suffix = fmtcep[-3:]
 
     return CEP(
-        formatted_cep=cep,
-        region=geo[0],
-        sub_region=geo[1],
-        sector=geo[2],
-        sub_sector=geo[3],
-        division=geo[4],
+        formatted_cep=fmtcep,
+        region=int(geo[0]),
+        sub_region=int(geo[1]),
+        sector=int(geo[2]),
+        sub_sector=int(geo[3]),
+        division=int(geo[4]),
         suffix=suffix,
     )
