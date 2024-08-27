@@ -12,8 +12,8 @@ def test_format(masp_cep):
     assert format("01310200") == masp_cep
 
 
-def test_parse():
-    result = parse("01310200")
+def test_parse(masp_cep):
+    result = parse(masp_cep)
     assert isinstance(result, CEP)
 
 
