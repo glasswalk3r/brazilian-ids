@@ -13,7 +13,6 @@ See also:
 """
 
 from dataclasses import dataclass
-from brazilian_ids.functions.util import NONDIGIT_REGEX
 
 
 @dataclass
@@ -34,15 +33,17 @@ class CEP:
 
 def format(cep: str) -> str:
     """Applies typical 00000-000 formatting to CEP."""
-    cep = NONDIGIT_REGEX.sub("", cep)
-    dig = len(cep)
+    cep = cep.replace("-", "")
+    total_digits = len(cep)
 
-    if dig == 4 or dig == 5:
-        cep = "0" * (5 - dig) + cep + "000"
-    elif dig == 7 or dig == 8:
-        cep = "0" * (8 - dig) + cep
-    else:
+    if not is_valid(cep=cep, raw=False, digits=total_digits):
+        # TODO: custom exception
         raise ValueError("Invalid CEP code: {0}".format(cep))
+
+    if total_digits == 4 or total_digits == 5:
+        cep = "0" * (5 - total_digits) + cep + "000"
+    else:
+        cep = "0" * (8 - total_digits) + cep
 
     return "{0}-{1}".format(cep[:-3], cep[-3:])
 
@@ -50,7 +51,6 @@ def format(cep: str) -> str:
 def parse(cep: str) -> CEP:
     """Split a CEP into region, sub-region, sector, subsector, division."""
     fmtcep = format(cep)
-    cep = fmtcep
     geo = [fmtcep[:i] for i in range(1, 6)]
     suffix = fmtcep[-3:]
 
