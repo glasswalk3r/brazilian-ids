@@ -47,6 +47,44 @@ def test_cep_instance(masp_cep):
     assert instance.formatted_cep == masp_cep
 
 
+@pytest.mark.parametrize(
+    "a, b",
+    (
+        ("39884-999", "39880-000"),
+        ("39880-001", "39880-000"),
+        ("39881-000", "39880-999"),
+    ),
+)
+def test_cep_instances_ge_comparison(a, b):
+    a_instance = parse(a)
+    b_instance = parse(b)
+
+    assert a >= b
+
+
+@pytest.mark.parametrize(
+    "a, b",
+    (
+        ("39880-000", "39884-999"),
+        ("39880-000", "39880-001"),
+        ("39880-999", "39881-000"),
+    ),
+)
+def test_cep_instances_le_comparison(a, b):
+    a_instance = parse(a)
+    b_instance = parse(b)
+
+    assert a <= b
+
+
+def test_cep_instances_between():
+    first = parse("39140-000")
+    last = parse("39149-999")
+    between = parse("39149-512")
+
+    assert between >= first and between <= last
+
+
 @pytest.mark.parametrize("valid_cep", ("39880-000", "39884-999"))
 def test_is_valid_with_valid(valid_cep):
     assert is_valid(valid_cep)
