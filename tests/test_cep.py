@@ -24,11 +24,11 @@ def test_parse_formated(masp_cep):
 
 def test_cep_instance(masp_cep):
     instance = CEP(
-        region="0",
-        sub_region="1",
-        sector="3",
-        sub_sector="1",
-        division="0",
+        region=0,
+        sub_region=1,
+        sector=3,
+        sub_sector=1,
+        division=0,
         suffix="200",
         formatted_cep=masp_cep,
     )
@@ -38,7 +38,12 @@ def test_cep_instance(masp_cep):
     for attribute in attribs:
         assert hasattr(instance, attribute)
 
-    assert instance.region == "0"
+    assert instance.region == 0
+    assert instance.sub_region == 1
+    assert instance.sector == 3
+    assert instance.sub_sector == 1
+    assert instance.division == 0
+    assert instance.suffix == "200"
     assert instance.formatted_cep == masp_cep
 
 
