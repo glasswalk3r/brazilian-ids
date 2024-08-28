@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 import httpx
-from collections import defaultdict
+from collections import defaultdict, deque
 from dataclasses import dataclass
 
 from brazilian_ids.functions.location.cep import is_valid, parse, CEP, InvalidCepError
@@ -48,10 +48,9 @@ class CepRangeHttpSource(CepRangeSource):
             self.__client = client
 
         self.__states: set[str] | None = None
-        # TODO: replace list with deque
         # state, location, tuple
-        self.__ceps: defaultdict[str, defaultdict[str, list[tuple[CEP, CEP]]]] = (
-            defaultdict(lambda: defaultdict(list))
+        self.__ceps: defaultdict[str, defaultdict[str, deque[tuple[CEP, CEP]]]] = (
+            defaultdict(lambda: defaultdict(deque))
         )
         self.__states_range_url = "/".join(
             [self.__correios_root_url, self.__states_range_path]
