@@ -50,3 +50,8 @@ def test_http_source_range_by_state(instance):
         tuple([parse("70000-001"), parse("72799-999")]),
         tuple([parse("73000-001"), parse("73699-999")]),
     ]
+
+
+def test_http_source_pagination(instance):
+    result = instance.ranges_by_state("MG")
+    assert len(result) > 50

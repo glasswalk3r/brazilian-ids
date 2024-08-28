@@ -1,7 +1,8 @@
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 import httpx
-from collections import defaultdict, deque
+from collections import defaultdict
+from dataclasses import dataclass
 
 from brazilian_ids.functions.location.cep import is_valid, parse, CEP
 
@@ -12,12 +13,24 @@ class CepInfoSource:
         pass
 
     @abstractmethod
-    def ranges_by_state(self, state: str) -> tuple[str, ...]:
+    def ranges_by_state(self, state: str) -> list[tuple[CEP, CEP]]:
         pass
 
     @abstractmethod
     def all_ranges(self):
         pass
+
+
+@dataclass(frozen=True, slots=True)
+class CorreiosPaginationParseResult:
+    rows_per_page: int = 50
+    start: str = 0
+    end: str = 0
+    location: str = ""
+    neighborhood: str = ""
+
+    def has_more(self) -> bool:
+        return int(self.start) > 0 and int(self.end) > 0
 
 
 class CepInfoHttpSource(CepInfoSource):
@@ -35,6 +48,7 @@ class CepInfoHttpSource(CepInfoSource):
             self.__client = client
 
         self.__states: set[str] | None = None
+        # TODO: replace list with deque
         # state, location, tuple
         self.__ceps: defaultdict[str, defaultdict[str, list[tuple[CEP, CEP]]]] = (
             defaultdict(lambda: defaultdict(list))
@@ -49,7 +63,7 @@ class CepInfoHttpSource(CepInfoSource):
     def __repr__(self):
         return self.__class__.__name__
 
-    def __parse_states(self, response: httpx.Response) -> None:
+    def __parse_states(self, response: httpx.Response) -> CorreiosPaginationParseResult:
         soup = BeautifulSoup(response.text, "lxml")
         result = soup.find("select", attrs={"name": "UF"})
 
@@ -80,8 +94,53 @@ class CepInfoHttpSource(CepInfoSource):
 
         return tuple(self.__states)
 
-    def __parse_ceps(self, response: httpx.Response, state: str) -> None:
+    def __parse_ceps(
+        self, response: httpx.Response, state: str
+    ) -> CorreiosPaginationParseResult:
         soup = BeautifulSoup(response.text, "lxml")
+
+        pagination = soup.find("form", attrs={"method": "post", "name": "Proxima"})
+
+        if pagination is not None:
+            location = pagination.find(
+                "input", attrs={"type": "Hidden", "name": "Localidade"}
+            )
+
+            if location is None:
+                # TODO: create custom exception
+                raise ValueError("Could not find the location in the pagination")
+
+            neighborhood = pagination.find(
+                "input", attrs={"type": "Hidden", "name": "Bairro"}
+            )
+
+            if neighborhood is None:
+                raise ValueError("Could not find the neighborhood in the pagination")
+
+            start = pagination.find("input", attrs={"type": "Hidden", "name": "pagini"})
+
+            if start is None:
+                raise ValueError("Could not find the start in the pagination")
+
+            end = pagination.find("input", attrs={"type": "Hidden", "name": "pagfim"})
+
+            if end is None:
+                raise ValueError("Could not find the end in the pagination")
+
+            rows = pagination.find("input", attrs={"type": "Hidden", "name": "qtdrow"})
+
+            if rows is None:
+                raise ValueError("Could not find the rows in the pagination")
+
+            result = CorreiosPaginationParseResult(
+                location=location.attrs["value"],
+                neighborhood=neighborhood.attrs["value"],
+                start=start.attrs["value"],
+                end=end.attrs["value"],
+                rows_per_page=rows.attrs["value"],
+            )
+        else:
+            result = CorreiosPaginationParseResult()
 
         for table in soup.find_all("table", attrs={"class": "tmptabela"}):
             # those tables are useless
@@ -116,11 +175,21 @@ class CepInfoHttpSource(CepInfoSource):
                     range_set.append(cell.text)
                     cell_counter += 1
 
-    def __get_ceps(self, state: str, location: str = "") -> httpx.Response:
+        return result
+
+    def __get_ceps(
+        self, state: str, pagination: CorreiosPaginationParseResult
+    ) -> httpx.Response:
+        data = {"UF": state, "Localidade": pagination.location}
+
+        if pagination.has_more():
+            data["Bairro"] = pagination.neighborhood
+            data["pagini"] = pagination.start
+            data["pagfim"] = pagination.end
+            data["qtdrow"] = pagination.rows_per_page
+
         try:
-            response = self.__client.post(
-                self.__cep_ranges_url, data={"UF": state, "Localidade": location}
-            )
+            response = self.__client.post(self.__cep_ranges_url, data=data)
             response.raise_for_status()
         except httpx.HTTPError as e:
             msg = f"Failed to fetch CEPs from state {state}: {e}"
@@ -129,7 +198,7 @@ class CepInfoHttpSource(CepInfoSource):
 
         return response
 
-    def ranges_by_state(self, state: str):
+    def ranges_by_state(self, state: str) -> list[tuple[CEP, CEP]]:
         if self.__states is None:
             res = self.__get_states()
             self.__parse_states(res)
@@ -138,8 +207,18 @@ class CepInfoHttpSource(CepInfoSource):
             raise ValueError(f"The state '{state}' is not valid")
 
         if state not in self.__ceps:
-            res = self.__get_ceps(state=state)
-            self.__parse_ceps(response=res, state=state)
+            result = self.__parse_ceps(
+                response=self.__get_ceps(
+                    state=state, pagination=CorreiosPaginationParseResult()
+                ),
+                state=state,
+            )
+
+            while result.has_more():
+                result = self.__parse_ceps(
+                    response=self.__get_ceps(state=state, pagination=result),
+                    state=state,
+                )
 
         ceps = []
 
@@ -157,11 +236,15 @@ class CepValidationByRange:
     def __init__(self):
         pass
 
+    def __valid_basic(cep: str) -> None:
+        if not is_valid(cep):
+            raise ValueError(f"The CEP '{cep}' is invalid")
+
     def is_valid(self, cep: str) -> bool:
-        pass
+        self.__valid_basic(cep)
 
     def is_valid_by_state(self, cep: str, state: str) -> bool:
-        pass
+        self.__valid_basic(cep)
 
     def is_valid_by_location(self, cep: str, state: str, location: str) -> bool:
-        pass
+        self.__valid_basic(cep)
