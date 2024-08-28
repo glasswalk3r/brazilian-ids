@@ -15,7 +15,7 @@ See also:
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True, repr=False)
 class CEP:
     """Representation of a CEP.
 
@@ -29,6 +29,9 @@ class CEP:
     sub_sector: int
     division: int
     suffix: str
+
+    def __repr__(self):
+        return self.formatted_cep
 
     def __ge__(self, other):
         test_sequence = ("region", "sub_region", "sub_sector", "division")
