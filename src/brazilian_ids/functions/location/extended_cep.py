@@ -4,10 +4,10 @@ import httpx
 from collections import defaultdict
 from dataclasses import dataclass
 
-from brazilian_ids.functions.location.cep import is_valid, parse, CEP
+from brazilian_ids.functions.location.cep import is_valid, parse, CEP, InvalidCepError
 
 
-class CepInfoSource:
+class CepRangeSource:
     @abstractmethod
     def valid_states(self) -> tuple[str, ...]:
         pass
@@ -33,7 +33,7 @@ class CorreiosPaginationParseResult:
         return int(self.start) > 0 and int(self.end) > 0
 
 
-class CepInfoHttpSource(CepInfoSource):
+class CepRangeHttpSource(CepRangeSource):
     __correios_root_url = "https://www2.correios.com.br"
     __states_range_path = "sistemas/buscacep/buscaFaixaCep.cfm"
     __cep_ranges_path = "sistemas/buscacep/resultadoBuscaFaixaCEP.cfm"
@@ -61,7 +61,9 @@ class CepInfoHttpSource(CepInfoSource):
         )
 
     def __repr__(self):
-        return self.__class__.__name__
+        return "{0}, root URL={1}".format(
+            self.__class__.__name__, self.__correios_root_url
+        )
 
     def __parse_states(self, response: httpx.Response) -> CorreiosPaginationParseResult:
         soup = BeautifulSoup(response.text, "lxml")
@@ -233,18 +235,18 @@ class CepInfoHttpSource(CepInfoSource):
 
 
 class CepValidationByRange:
-    def __init__(self):
-        pass
+    def __init__(self, source: CepRangeSource):
+        self.__source = source
 
-    def __valid_basic(cep: str) -> None:
+    def __basic_verification(cep: str) -> None:
         if not is_valid(cep):
-            raise ValueError(f"The CEP '{cep}' is invalid")
+            raise InvalidCepError(cep)
 
     def is_valid(self, cep: str) -> bool:
-        self.__valid_basic(cep)
+        self.__basic_verification(cep)
 
     def is_valid_by_state(self, cep: str, state: str) -> bool:
-        self.__valid_basic(cep)
+        self.__basic_verification(cep)
 
     def is_valid_by_location(self, cep: str, state: str, location: str) -> bool:
-        self.__valid_basic(cep)
+        self.__basic_verification(cep)

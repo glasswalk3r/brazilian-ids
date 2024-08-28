@@ -1,12 +1,19 @@
 import pytest
 
-from brazilian_ids.functions.location.extended_cep import CepInfoHttpSource
+from brazilian_ids.functions.location.extended_cep import (
+    CepRangeHttpSource,
+    CepRangeSource,
+)
 from brazilian_ids.functions.location.cep import parse
 
 
 @pytest.fixture(scope="session")
 def instance():
-    return CepInfoHttpSource()
+    return CepRangeHttpSource()
+
+
+def test_range_http_source():
+    assert issubclass(CepRangeHttpSource, CepRangeSource)
 
 
 def test_http_source_states(instance):
