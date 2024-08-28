@@ -13,6 +13,12 @@ See also:
 """
 
 from dataclasses import dataclass
+from brazilian_ids.functions.exceptions import InvalidIdError
+
+
+class InvalidCepError(InvalidIdError):
+    def id_type(self, cep: str):
+        return f"Invalid CEP code '{cep}'"
 
 
 @dataclass(frozen=True, slots=True, repr=False)
@@ -83,8 +89,7 @@ def format(cep: str) -> str:
     total_digits = len(cep)
 
     if not is_valid(cep=cep, raw=False, digits=total_digits):
-        # TODO: custom exception
-        raise ValueError("Invalid CEP code: {0}".format(cep))
+        raise InvalidCepError(cep)
 
     if total_digits == 4 or total_digits == 5:
         cep = "0" * (5 - total_digits) + cep + "000"
