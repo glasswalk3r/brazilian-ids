@@ -59,7 +59,7 @@ def test_cep_instances_ge_comparison(a, b):
     a_instance = parse(a)
     b_instance = parse(b)
 
-    assert a >= b
+    assert a_instance >= b_instance
 
 
 @pytest.mark.parametrize(
@@ -74,7 +74,7 @@ def test_cep_instances_le_comparison(a, b):
     a_instance = parse(a)
     b_instance = parse(b)
 
-    assert a <= b
+    assert a_instance <= b_instance
 
 
 def test_cep_instances_between():
