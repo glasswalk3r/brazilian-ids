@@ -4,7 +4,7 @@ import httpx
 from collections import defaultdict, deque
 from dataclasses import dataclass
 
-from brazilian_ids.functions.location.cep import is_valid, parse, CEP, InvalidCepError
+from brazilian_ids.functions.location.cep import is_valid, parse, CEP
 
 
 class CepRangeSource:
@@ -17,8 +17,15 @@ class CepRangeSource:
         pass
 
     @abstractmethod
+    def ranges_by_location(self, state: str, location: str) -> list[tuple[CEP, CEP]]:
+        pass
+
+    @abstractmethod
     def all_ranges(self):
         pass
+
+    def __repr__(self):
+        return "{0}, source={1}".format(self.__class__.__name__, self.source)
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,6 +54,8 @@ class CepRangeHttpSource(CepRangeSource):
         else:
             self.__client = client
 
+        self.source = self.__correios_root_url
+
         self.__states: set[str] | None = None
         # state, location, tuple
         self.__ceps: defaultdict[str, defaultdict[str, deque[tuple[CEP, CEP]]]] = (
@@ -57,11 +66,6 @@ class CepRangeHttpSource(CepRangeSource):
         )
         self.__cep_ranges_url = "/".join(
             [self.__correios_root_url, self.__cep_ranges_path]
-        )
-
-    def __repr__(self):
-        return "{0}, root URL={1}".format(
-            self.__class__.__name__, self.__correios_root_url
         )
 
     def __parse_states(self, response: httpx.Response) -> CorreiosPaginationParseResult:
@@ -199,27 +203,35 @@ class CepRangeHttpSource(CepRangeSource):
 
         return response
 
-    def ranges_by_state(self, state: str) -> list[tuple[CEP, CEP]]:
+    def __by_state(self, state: str) -> None:
+        result = self.__parse_ceps(
+            response=self.__get_ceps(
+                state=state, pagination=CorreiosPaginationParseResult()
+            ),
+            state=state,
+        )
+
+        while result.has_more():
+            result = self.__parse_ceps(
+                response=self.__get_ceps(state=state, pagination=result),
+                state=state,
+            )
+
+    def __test_cache(self, state: str) -> None:
         if self.__states is None:
             res = self.__get_states()
             self.__parse_states(res)
 
+        if state not in self.__ceps:
+            self.__by_state(state)
+
+    def __test_state(self, state: str) -> None:
         if state not in self.__states:
             raise ValueError(f"The state '{state}' is not valid")
 
-        if state not in self.__ceps:
-            result = self.__parse_ceps(
-                response=self.__get_ceps(
-                    state=state, pagination=CorreiosPaginationParseResult()
-                ),
-                state=state,
-            )
-
-            while result.has_more():
-                result = self.__parse_ceps(
-                    response=self.__get_ceps(state=state, pagination=result),
-                    state=state,
-                )
+    def ranges_by_state(self, state: str) -> list[tuple[CEP, CEP]]:
+        self.__test_cache(state)
+        self.__test_state(state)
 
         ceps = []
 
@@ -229,6 +241,17 @@ class CepRangeHttpSource(CepRangeSource):
 
         return ceps
 
+    def ranges_by_location(self, state: str, location: str) -> list[tuple[CEP, CEP]]:
+        self.__test_cache(state)
+        self.__test_state(state)
+
+        if location not in self.__ceps[state]:
+            raise ValueError(
+                f"The location '{location}' is not valid for state '{state}'"
+            )
+
+        return [pair for pair in self.__ceps[state][location]]
+
     def all_ranges(self):
         pass
 
@@ -237,15 +260,23 @@ class CepValidationByRange:
     def __init__(self, source: CepRangeSource):
         self.__source = source
 
-    def __basic_verification(cep: str) -> None:
-        if not is_valid(cep):
-            raise InvalidCepError(cep)
-
     def is_valid(self, cep: str) -> bool:
-        self.__basic_verification(cep)
+        if not is_valid(cep):
+            return False
 
     def is_valid_by_state(self, cep: str, state: str) -> bool:
-        self.__basic_verification(cep)
+        if not is_valid(cep):
+            return False
 
     def is_valid_by_location(self, cep: str, state: str, location: str) -> bool:
-        self.__basic_verification(cep)
+        if not is_valid(cep):
+            return False
+
+        ceps = self.__source.ranges_by_location(state=state, location=location)
+        cep_instance = parse(cep)
+
+        for pair in ceps:
+            if cep_instance >= pair[0] and cep_instance <= pair[1]:
+                return True
+
+        return False
