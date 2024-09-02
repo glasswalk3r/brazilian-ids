@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import httpx
 from collections import defaultdict, deque
 from dataclasses import dataclass
+import weakref
 
 from brazilian_ids.functions.location.cep import is_valid, parse, CEP
 
@@ -51,6 +52,7 @@ class CepRangeHttpSource(CepRangeSource):
     def __init__(self, client: httpx.Client | None = None):
         if client is None:
             self.__client = httpx.Client(headers={"User-Agent": self.user_agent})
+            weakref.finalize(self, self.__client.close)
         else:
             self.__client = client
 
