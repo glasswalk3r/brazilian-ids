@@ -32,13 +32,13 @@ class CepRangeSource:
 @dataclass(frozen=True, slots=True)
 class CorreiosPaginationParseResult:
     rows_per_page: int = 50
-    start: str = 0
-    end: str = 0
+    start: str = '0'
+    end: str = '0'
     location: str = ""
     neighborhood: str = ""
 
     def has_more(self) -> bool:
-        return int(self.start) > 0 and int(self.end) > 0
+        return (start := int(self.start)) > 0 and (end := int(self.end) > 0) and (start < end)
 
 
 class CepRangeHttpSource(CepRangeSource):
