@@ -131,8 +131,8 @@ def test_cep_range_all_ranges():
     pair = next(result)
     assert pair.__class__.__name__ == "tuple"
 
-    for i in pair:
-        assert pair[i].__class__.__name__ == "CEP"
+    for cep in pair:
+        assert cep.__class__.__name__ == "CEP"
 
 
 @pytest.mark.parametrize("invalid_cep", ("72000-000", "73000-000"))
