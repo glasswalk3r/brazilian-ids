@@ -48,33 +48,33 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
-lint: ## check style with flake8
-	flake8 src/brazilian_ids tests
+lint: ## check style with ruff
+	uv run ruff check src/brazilian_ids tests
 
-test: ## run tests quickly with the default Python
-	python -m pytest
+test: ## run tests quickly with uv
+	uv run pytest
 
 coverage:
-	pytest -v --cov
+	uv run pytest -v --cov
 
 release: dist ## package and upload a release
-	python -m twine upload dist/*
+	uv publish
 
 dist: clean ## builds source and wheel package
-	python -m build
+	uv build
 
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	uv pip install .
 
-init:
-	pip install --upgrade pip
-	pip install --upgrade -r requirements-dev.txt
+init: ## install/sync runtime and dev dependencies with uv
+	uv sync
+
 bump:
-	bump-my-version bump patch
+	uv run bump-my-version bump patch
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/modules.rst
-	sphinx-apidoc --implicit-namespaces --module-first --ext-autodoc -o docs/source src/brazilian_ids
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
+	uv run sphinx-apidoc --implicit-namespaces --module-first --ext-autodoc -o docs/source src/brazilian_ids
+	$(MAKE) -C docs clean SPHINXBUILD="uv run sphinx-build"
+	$(MAKE) -C docs html SPHINXBUILD="uv run sphinx-build"
 	$(BROWSER) docs/build/html/index.html
