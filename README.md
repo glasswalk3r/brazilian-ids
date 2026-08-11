@@ -22,7 +22,8 @@ for details.
 
 There are no external dependencies to just use the module.
 
-For development, see the `requirements-dev.txt` and `Makefile` files.
+Development dependencies are managed with [uv](https://docs.astral.sh/uv/) and declared in the `dev` group of
+`pyproject.toml`. See also the `Makefile` file.
 
 ## To do
 
