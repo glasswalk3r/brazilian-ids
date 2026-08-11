@@ -69,14 +69,12 @@ def validation_digit(pis_pasep: str) -> int:
 def format(pis_pasep: str) -> str:
     """Applies the format '000.0000.000-0' to a PIS/PASEP."""
     pis_pasep = pad(pis_pasep)
-    return "{0}.{1}.{2}-{3}".format(
-        pis_pasep[:3], pis_pasep[3:7], pis_pasep[7:10], pis_pasep[10]
-    )
+    return f"{pis_pasep[:3]}.{pis_pasep[3:7]}.{pis_pasep[7:10]}-{pis_pasep[10]}"
 
 
 def pad(pis_pasep: str, validate: bool = False) -> str:
     """Takes a PIS/PASEP that should have leading zeros and pads it."""
-    padded = str("%0.011i" % int(pis_pasep))
+    padded = f"{int(pis_pasep):0.011i}"
 
     if validate:
         if is_valid(padded):

@@ -19,7 +19,7 @@ CPFRecord = namedtuple("CPFRecord", "raw_cpf formated_cpf")
 def read_csv() -> tuple[CPFRecord, ...]:
     data: deque[CPFRecord] = deque()
 
-    with open(csv, "r") as fp:
+    with open(csv) as fp:
         for line in fp:
             cpf = CPFRecord._make(line.rstrip().split(","))
             data.append(cpf)

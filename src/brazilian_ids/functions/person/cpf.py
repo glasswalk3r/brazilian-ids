@@ -95,7 +95,7 @@ def pad(cpf: str) -> str:
 
     If the given CPF is invalid, the ``InvalidCPFError`` exception is raised.
     """
-    padded = "%0.011i" % int(cpf)
+    padded = f"{int(cpf):0.011i}"
 
     if not is_valid(cpf=cpf, autopad=False):
         raise InvalidCpfError(cpf)
@@ -107,7 +107,7 @@ def random(formatted: bool = True) -> str:
     """Create a random, valid CPF identifier."""
     stem = str(randint(100000000, 999999999))
     digits = verification_digits(stem)
-    cpf = "{0}{1}{2}".format(stem, digits[0], digits[1])
+    cpf = f"{stem}{digits[0]}{digits[1]}"
 
     if formatted:
         return format(cpf)
