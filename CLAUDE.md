@@ -6,8 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Python 3 (>=3.10) package that validates and formats Brazilian identification numbers/documents: CNPJ, CPF,
 CEP (postal code), Município (municipality codes), PIS/PASEP, CNO, NUPJ (labor lawsuit numbers), and SQL
-("Sequencial de Quadra") for real estate. Zero runtime dependencies for normal use of the package (the
-`extended_cep` module is the one exception — see below).
+("Sequencial de Quadra") for real estate. Zero runtime dependencies.
 
 ## Development commands
 
@@ -54,7 +53,7 @@ Code lives under `src/brazilian_ids/functions/<domain>/<id>.py`, grouped by real
 
 - `company/cnpj.py` — CNPJ
 - `person/cpf.py`, `person/pis_pasep.py`
-- `location/cep.py`, `location/extended_cep.py`, `location/municipio.py`, `location/states.py`
+- `location/cep.py`, `location/municipio.py`, `location/states.py`
 - `labor_dispute/nupj.py`
 - `real_state/cno.py`, `real_state/sql.py`
 - `functions/exceptions.py` — shared base exceptions
@@ -97,15 +96,11 @@ class InvalidCpfLengthError(InvalidCpfTypeMixin, InvalidIdLengthError): ...
 ```
 Follow this mixin pattern rather than duplicating `id_type()` in each exception class.
 
-### `location/cep.py` vs `location/extended_cep.py`
+### `location/cep.py`
 
-- `cep.py` is dependency-free and holds the core `CEP` dataclass (frozen, with `__ge__`/`__le__` for range
-  comparisons), `parse`/`format`/`is_valid`, and `is_valid_extended`, which checks a CEP against known per-state
-  numeric ranges (`CepRange`, a singleton via the local `Singleton` metaclass) without any network access.
-- `extended_cep.py` is the only module with third-party dependencies (`httpx`, `beautifulsoup4`) — it scrapes
-  live CEP range data from Correios' website (`CepRangeHttpSource`) to validate/enumerate ranges more precisely
-  than the static table in `cep.py`. These deps aren't declared in `pyproject.toml`'s `dependencies` — treat this
-  module as optional/experimental and don't assume `httpx`/`bs4` are installed elsewhere in the package.
+Dependency-free. Holds the core `CEP` dataclass (frozen, with `__ge__`/`__le__` for range comparisons),
+`parse`/`format`/`is_valid`, and `is_valid_extended`, which checks a CEP against known per-state numeric ranges
+(`CepRange`, a singleton via the local `Singleton` metaclass) without any network access.
 
 ### Tests
 
