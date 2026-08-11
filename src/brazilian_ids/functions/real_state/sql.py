@@ -37,9 +37,7 @@ class InvalidSqlError(InvalidSqlTypeMixin, InvalidIdError):
 class InvalidSqlLengthError(InvalidSqlTypeMixin, InvalidIdLengthError):
     """Exception for invalid SQL length error."""
 
-    def __init__(
-        self, sql: str, expected_digits: int = EXPECTED_DIGITS_WITHOUT_VERIFICATION
-    ) -> None:
+    def __init__(self, sql: str, expected_digits: int = EXPECTED_DIGITS_WITHOUT_VERIFICATION) -> None:
         super().__init__(id=sql, expected_digits=expected_digits)
 
 
@@ -92,7 +90,7 @@ def format(sql: str) -> str:
     if len(sql) < EXPECTED_DIGITS:
         raise InvalidSqlError(sql)
 
-    return "{0}.{1}.{2}-{3}".format(sql[:3], sql[3:6], sql[6:10], sql[-1])
+    return f"{sql[:3]}.{sql[3:6]}.{sql[6:10]}-{sql[-1]}"
 
 
 def pad(sql: str) -> str:

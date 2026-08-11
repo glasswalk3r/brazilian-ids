@@ -11,7 +11,7 @@ class InvalidIdError(ValueError):
         """Return the ID type. Subclasses must override this method."""
         pass
 
-    def __init__(self, id: str, message: None | str = None) -> None:
+    def __init__(self, id: str, message: str | None = None) -> None:
         self.id_ = id
 
         if message is None:
@@ -26,7 +26,5 @@ class InvalidIdLengthError(InvalidIdError):
     one in the expected number of digits."""
 
     def __init__(self, id: str, expected_digits: int) -> None:
-        msg = "A {0} must have at least {1} digits, '{2}' has only {3}".format(
-            self.id_type(), expected_digits, id, len(id)
-        )
+        msg = f"A {self.id_type()} must have at least {expected_digits} digits, '{id}' has only {len(id)}"
         super().__init__(id=id, message=msg)
