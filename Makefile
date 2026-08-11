@@ -50,6 +50,7 @@ clean-test: ## remove test and coverage artifacts
 
 lint: ## check style with ruff
 	uv run ruff check src/brazilian_ids tests
+	uv run mypy -p brazilian_ids
 
 test: ## run tests quickly with uv
 	uv run pytest
@@ -64,7 +65,7 @@ dist: clean ## builds source and wheel package
 	uv build
 
 install: clean ## install the package to the active Python's site-packages
-	uv pip install .
+	uv sync
 
 init: ## install/sync runtime and dev dependencies with uv
 	uv sync
