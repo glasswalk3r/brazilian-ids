@@ -54,9 +54,7 @@ class Municipio:
             "53": "Distrito",
         }
 
-    def __init__(
-        self, unidade_federativa: str, municipio: str, control_digits: str
-    ) -> None:
+    def __init__(self, unidade_federativa: str, municipio: str, control_digits: str) -> None:
         if len(unidade_federativa) != 2:
             raise ValueError("Federal unit must have two digits")
 
@@ -111,14 +109,10 @@ class Municipio:
         )
 
     def __str__(self):
-        return "{0} in {1}".format(
-            self.__muni, self.federal_units()[self._fed_unit_code]
-        )
+        return f"{self.__muni} in {self.federal_units()[self._fed_unit_code]}"
 
     def __repr__(self):
-        return 'Municipio(unidade_federativa="{0}", municipio="{1}", control_digits="{2}")'.format(
-            self.__fed_unit_code, self.__muni, self.__digits
-        )
+        return f'Municipio(unidade_federativa="{self.__fed_unit_code}", municipio="{self.__muni}", control_digits="{self.__digits}")'
 
 
 EXPECTED_DIGITS = 7
@@ -133,9 +127,7 @@ def __split_municipio(municipio: str) -> tuple[str, str, str]:
 
 def parse(municipio: str) -> Municipio:
     data = __split_municipio(municipio)
-    return Municipio(
-        unidade_federativa=data[0], municipio=data[1], control_digits=data[2]
-    )
+    return Municipio(unidade_federativa=data[0], municipio=data[1], control_digits=data[2])
 
 
 class InvalidMunicipioTypeMixin:
@@ -187,7 +179,7 @@ def is_valid(municipio: str) -> bool:
     if municipio[0] == "0":
         return False
 
-    if municipio in INVALID.keys():  # need to check exceptions list
+    if municipio in INVALID:  # need to check exceptions list
         return True
 
     try:

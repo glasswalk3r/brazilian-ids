@@ -29,9 +29,7 @@ EXPECTED_DIGITS_WITHOUT_VERIFICATION = 12
 
 
 class InvalidCnpjLengthError(InvalidCnpjTypeMixin, InvalidIdLengthError):
-    def __init__(
-        self, cnpj: str, expected_digits: int = EXPECTED_DIGITS_WITHOUT_VERIFICATION
-    ) -> None:
+    def __init__(self, cnpj: str, expected_digits: int = EXPECTED_DIGITS_WITHOUT_VERIFICATION) -> None:
         super().__init__(id=cnpj, expected_digits=expected_digits)
 
 
@@ -113,15 +111,13 @@ def verification_digits(cnpj: str) -> tuple[int, int]:
     return (check, 11 - cs)
 
 
-def from_firm_id(
-    firm: str, establishment: str = "0001", formatted: bool = False
-) -> str:
+def from_firm_id(firm: str, establishment: str = "0001", formatted: bool = False) -> str:
     """Takes first 8 digits of a CNPJ (firm identifier) and builds a valid,
     complete CNPJ by appending an establishment identifier and calculating
     necessary check digits.
     """
     firm = NONDIGIT_REGEX.sub("", firm)
-    cnpj = "{0}{1}".format(firm, establishment)
+    cnpj = f"{firm}{establishment}"
     digits = "".join([str(k) for k in verification_digits(cnpj)])
 
     if not formatted:
@@ -139,7 +135,7 @@ def format(cnpj: str) -> str:
 
 def pad(cnpj: str, validate_after: bool = False) -> str:
     """Takes a CNPJ and pads it with leading zeros."""
-    padded = "%0.014i" % int(cnpj)
+    padded = f"{int(cnpj):0.014i}"
 
     if validate_after:
         if not is_valid(padded):

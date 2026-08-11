@@ -13,11 +13,12 @@ References:
 - `Lista de Código do tribunal <https://www.tjsp.jus.br/cac/scp/Arquivos/Documentos/TJSP_DEPRE_Layout_de_Importa%C3%A7%C3%A3o_v2.1.pdf>`_
 """
 
-from dataclasses import dataclass
 from collections import deque
+from dataclasses import dataclass
+from typing import ClassVar
 
-from brazilian_ids.functions.util import NONDIGIT_REGEX
 from brazilian_ids.functions.exceptions import InvalidIdError
+from brazilian_ids.functions.util import NONDIGIT_REGEX
 
 
 class InvalidCourtIdError(ValueError):
@@ -97,7 +98,7 @@ class Courts:
         "Justiça Militar Estadual",
     )
 
-    __courts_descriptions_prefix = {
+    __courts_descriptions_prefix: ClassVar[dict[int, str]] = {
         4: "Tribunal Regional Federal da",
         5: "Tribunal Regional do Trabalho da",
         6: "Tribunal Regional Eleitoral",
@@ -106,9 +107,9 @@ class Courts:
         9: "Tribunal de Justiça Militar",
     }
 
-    __unknown_court = {"00": ("N/D", "Não Disponível")}
+    __unknown_court: ClassVar[dict[str, str]] = {"00": ("N/D", "Não Disponível")}
 
-    __segments_courts = {
+    __segments_courts: ClassVar[dict[int], tuple[str, str]] = {
         1: __unknown_court,
         2: __unknown_court,
         3: __unknown_court,
@@ -277,9 +278,7 @@ class Courts:
         return Court(
             id=court_id,
             acronym=court[0],
-            description="{0} {1}".format(
-                klass.__courts_descriptions_prefix[segment_id], court[1]
-            ),
+            description=f"{klass.__courts_descriptions_prefix[segment_id]} {court[1]}",
         )
 
     @classmethod
@@ -318,7 +317,7 @@ class NUPJ:
     lawsuit_city: str
 
     def __str__(self) -> str:
-        return "{}".format(self.lawsuit_id)
+        return f"{self.lawsuit_id}"
 
     def digits(self) -> str:
         return f"{self.first_digit}{self.second_digit}"
@@ -327,19 +326,19 @@ class NUPJ:
 EXPECTED_DIGITS = 20
 
 # saving some memory
-__zero_tr = (set(("00",)),)
-__1_to_27_tr = set(["%02d" % i for i in range(1, 28)])
+__zero_tr = ({"00"},)
+__1_to_27_tr = {f"{i:02d}" % i for i in range(1, 28)}
 
 COURTS_TRS: dict[int, set[str]] = {
     1: __zero_tr,
     2: __zero_tr,
     3: __zero_tr,
-    4: set(("01", "02", "03", "04", "05", "06")),
-    5: set(["%02d" % i for i in range(1, 25)]),
+    4: {"01", "02", "03", "04", "05", "06"},
+    5: {f"{i:02d}" % i for i in range(1, 25)},
     6: __1_to_27_tr,
-    7: set(["%02d" % i for i in range(1, 13)]),
+    7: {f"{i:02d}" % i for i in range(1, 13)},
     8: __1_to_27_tr,
-    9: set(("13", "21", "26")),
+    9: {"13", "21", "26"},
 }
 
 
@@ -415,23 +414,12 @@ def is_valid(nupj: str) -> bool:
             return False
 
     # "Conselho da Justiça Federal" and "Conselho Superior da Justiça do Trabalho" uses "90"
-    if parsed.court_id != "90" and parsed.court_id not in COURTS_TRS[parsed.segment]:
-        if parsed.court_id != "00":
-            return False
+    if parsed.court_id != "90" and parsed.court_id not in COURTS_TRS[parsed.segment] and parsed.court_id != "00":
+        return False
 
     divisor = 97
     partial_1 = str(int(parsed.lawsuit_id) % divisor)
-    partial_2 = str(
-        int(
-            "{0}{1}{2}{3}".format(
-                partial_1, parsed.year, parsed.segment, parsed.court_id
-            )
-        )
-        % divisor
-    )
-    result = (
-        int("{0}{1}{2}".format(partial_2, parsed.lawsuit_city, parsed.digits()))
-        % divisor
-    )
+    partial_2 = str(int(f"{partial_1}{parsed.year}{parsed.segment}{parsed.court_id}") % divisor)
+    result = int(f"{partial_2}{parsed.lawsuit_city}{parsed.digits()}") % divisor
 
     return result == 1
