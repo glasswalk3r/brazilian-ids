@@ -74,7 +74,7 @@ def format(pis_pasep: str) -> str:
 
 def pad(pis_pasep: str, validate: bool = False) -> str:
     """Takes a PIS/PASEP that should have leading zeros and pads it."""
-    padded = f"{int(pis_pasep):0.011i}"
+    padded = f"{int(pis_pasep):011d}"
 
     if validate:
         if is_valid(padded):

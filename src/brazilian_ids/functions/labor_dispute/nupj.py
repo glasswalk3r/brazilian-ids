@@ -107,9 +107,9 @@ class Courts:
         9: "Tribunal de Justiça Militar",
     }
 
-    __unknown_court: ClassVar[dict[str, str]] = {"00": ("N/D", "Não Disponível")}
+    __unknown_court: ClassVar[dict[str, tuple[str, str]]] = {"00": ("N/D", "Não Disponível")}
 
-    __segments_courts: ClassVar[dict[int], tuple[str, str]] = {
+    __segments_courts: ClassVar[dict[int, dict[str, tuple[str, str]]]] = {
         1: __unknown_court,
         2: __unknown_court,
         3: __unknown_court,
@@ -327,16 +327,16 @@ EXPECTED_DIGITS = 20
 
 # saving some memory
 __zero_tr = ({"00"},)
-__1_to_27_tr = {f"{i:02d}" % i for i in range(1, 28)}
+__1_to_27_tr = {f"{i:02d}" for i in range(1, 28)}
 
 COURTS_TRS: dict[int, set[str]] = {
     1: __zero_tr,
     2: __zero_tr,
     3: __zero_tr,
     4: {"01", "02", "03", "04", "05", "06"},
-    5: {f"{i:02d}" % i for i in range(1, 25)},
+    5: {f"{i:02d}" for i in range(1, 25)},
     6: __1_to_27_tr,
-    7: {f"{i:02d}" % i for i in range(1, 13)},
+    7: {f"{i:02d}" for i in range(1, 13)},
     8: __1_to_27_tr,
     9: {"13", "21", "26"},
 }

@@ -87,7 +87,7 @@ def format(cno: str) -> str:
 
 def pad(cno: str, validate_after=False) -> str:
     """Takes a CEI that probably had leading zeros and pads it."""
-    padded = f"{int(cno):0.012i}"
+    padded = f"{int(cno):012d}"
 
     if validate_after:
         if is_valid(padded):

@@ -135,7 +135,7 @@ def format(cnpj: str) -> str:
 
 def pad(cnpj: str, validate_after: bool = False) -> str:
     """Takes a CNPJ and pads it with leading zeros."""
-    padded = f"{int(cnpj):0.014i}"
+    padded = f"{int(cnpj):014d}"
 
     if validate_after:
         if not is_valid(padded):

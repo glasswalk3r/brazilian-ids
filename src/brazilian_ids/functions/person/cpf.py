@@ -95,7 +95,7 @@ def pad(cpf: str) -> str:
 
     If the given CPF is invalid, the ``InvalidCPFError`` exception is raised.
     """
-    padded = f"{int(cpf):0.011i}"
+    padded = f"{int(cpf):011d}"
 
     if not is_valid(cpf=cpf, autopad=False):
         raise InvalidCpfError(cpf)
