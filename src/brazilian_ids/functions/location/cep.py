@@ -13,8 +13,9 @@ See also:
 - `CEP <https://pt.wikipedia.org/wiki/C%C3%B3digo_de_Endere%C3%A7amento_Postal>`_
 """
 
+from collections.abc import Generator
 from dataclasses import dataclass
-from typing import Generator
+from typing import Any, ClassVar
 
 from brazilian_ids.functions.exceptions import InvalidIdError
 
@@ -72,16 +73,18 @@ class CEP:
 
 class Singleton(type):
     """Implement the singleton pattern."""
-    _instances = {}
+
+    _instances: ClassVar[dict[type, Any]] = {}
 
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
 
 class CepInvalidStateError(ValueError):
     """Error for CEP associated with a invalid state code."""
+
     def __init__(self, state_code):
         super().__init__(f"The state '{state_code}' does not exist")
         self.state_code = state_code
@@ -89,7 +92,8 @@ class CepInvalidStateError(ValueError):
 
 class CepRange(metaclass=Singleton):
     """Representation of all the CEPs range by state, as documented by Correios."""
-    __slots__ = "__ranges"
+
+    __slots__ = ("__ranges",)
 
     def __init__(self):
         self.__ranges = {
@@ -137,7 +141,7 @@ class CepRange(metaclass=Singleton):
             yield (parse(start), parse(end))
 
     def __repr__(self):
-        return "{0}, total of ranges: {1}".format(self.__class__.__name__, len(self.__ranges))
+        return f"{self.__class__.__name__}, total of ranges: {len(self.__ranges)}"
 
 
 def is_valid(cep: str, raw: bool = False, digits: int = 0) -> bool:
@@ -156,11 +160,11 @@ def is_valid(cep: str, raw: bool = False, digits: int = 0) -> bool:
     if digits == 0:
         digits = len(cep)
 
-    expected = set([4, 5, 7, 8])
+    expected = {4, 5, 7, 8}
     return digits in expected
 
 
-def is_valid_extended(cep: str, raw: bool = False, digits: int = 0, state: str | None=None) -> bool:
+def is_valid_extended(cep: str, raw: bool = False, digits: int = 0, state: str | None = None) -> bool:
     """Check if a CEP is valid or not.
 
     This function does everything that ``is_valid`` function does, plus some additional verifications that will take a
@@ -188,10 +192,12 @@ def is_valid_extended(cep: str, raw: bool = False, digits: int = 0, state: str |
 
     return False
 
+
 class InvalidCepError(InvalidIdError):
     """Exception for an invalid CEP."""
-    def id_type(self, cep: str):
-        return f"Invalid CEP code '{cep}'"
+
+    def id_type(self):
+        return "CEP"
 
 
 def format(cep: str) -> str:
@@ -207,7 +213,7 @@ def format(cep: str) -> str:
     else:
         cep = "0" * (8 - total_digits) + cep
 
-    return "{0}-{1}".format(cep[:-3], cep[-3:])
+    return f"{cep[:-3]}-{cep[-3:]}"
 
 
 def parse(cep: str) -> CEP:

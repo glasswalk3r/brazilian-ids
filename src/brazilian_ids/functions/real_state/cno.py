@@ -87,7 +87,7 @@ def format(cno: str) -> str:
 
 def pad(cno: str, validate_after=False) -> str:
     """Takes a CEI that probably had leading zeros and pads it."""
-    padded = "%0.012i" % int(cno)
+    padded = f"{int(cno):012d}"
 
     if validate_after:
         if is_valid(padded):
@@ -100,8 +100,8 @@ def pad(cno: str, validate_after=False) -> str:
 def random(formatted: bool = True) -> str:
     """Create a random, valid CNO identifier."""
     uf = randint(11, 53)
-    stem = "{0}{1}".format(uf, randint(100000000, 999999999))
-    cno = "{0}{1}".format(stem, verification_digit(stem))
+    stem = f"{uf}{randint(100000000, 999999999)}"
+    cno = f"{stem}{verification_digit(stem)}"
 
     if formatted:
         return format(cno)
