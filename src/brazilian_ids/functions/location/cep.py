@@ -196,8 +196,8 @@ def is_valid_extended(cep: str, raw: bool = False, digits: int = 0, state: str |
 class InvalidCepError(InvalidIdError):
     """Exception for an invalid CEP."""
 
-    def id_type(self, cep: str):
-        return f"Invalid CEP code '{cep}'"
+    def id_type(self):
+        return "CEP"
 
 
 def format(cep: str) -> str:

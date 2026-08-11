@@ -22,7 +22,7 @@ from brazilian_ids.functions.util import NONDIGIT_REGEX
 
 
 class InvalidCourtIdError(ValueError):
-    def __init__(self, court_id: int) -> None:
+    def __init__(self, court_id: str) -> None:
         self.id_ = court_id
         msg = f"The court_id '{court_id}' is invalid"
         super().__init__(self, msg)
@@ -247,19 +247,19 @@ class Courts:
     }
 
     @classmethod
-    def __court(klass, segment_id: int, court_id: str) -> str:
+    def __court(klass, segment_id: int, court_id: str) -> tuple[str, str]:
         if klass.__segments[segment_id] is None:
             raise InvalidSegmentIdError(segment_id)
 
         try:
             courts = klass.__segments_courts[segment_id]
-        except IndexError as e:
-            raise InvalidSegmentIdError(e)
+        except IndexError:
+            raise InvalidSegmentIdError(segment_id)
 
         try:
             court = courts[court_id]
-        except KeyError as e:
-            raise InvalidCourtIdError(e)
+        except KeyError:
+            raise InvalidCourtIdError(court_id)
 
         if court is None:
             raise InvalidCourtIdError(court_id)
@@ -289,10 +289,10 @@ class Courts:
     def segment(klass, id: int) -> str:
         try:
             description = klass.__segments[id]
-        except IndexError as e:
-            raise InvalidSegmentIdError(e)
-        except KeyError as e:
-            raise InvalidSegmentIdError(e)
+        except IndexError:
+            raise InvalidSegmentIdError(id)
+        except KeyError:
+            raise InvalidSegmentIdError(id)
 
         if description is None:
             raise InvalidSegmentIdError(id)
@@ -326,7 +326,7 @@ class NUPJ:
 EXPECTED_DIGITS = 20
 
 # saving some memory
-__zero_tr = ({"00"},)
+__zero_tr = {"00"}
 __1_to_27_tr = {f"{i:02d}" for i in range(1, 28)}
 
 COURTS_TRS: dict[int, set[str]] = {
@@ -420,6 +420,4 @@ def is_valid(nupj: str) -> bool:
     divisor = 97
     partial_1 = str(int(parsed.lawsuit_id) % divisor)
     partial_2 = str(int(f"{partial_1}{parsed.year}{parsed.segment}{parsed.court_id}") % divisor)
-    result = int(f"{partial_2}{parsed.lawsuit_city}{parsed.digits()}") % divisor
-
-    return result == 1
+    return (int(f"{partial_2}{parsed.lawsuit_city}{parsed.digits()}") % divisor) == 1
