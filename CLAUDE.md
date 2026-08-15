@@ -6,7 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Python 3 (>=3.10) package that validates and formats Brazilian identification numbers/documents: CNPJ, CPF,
 CEP (postal code), Município (municipality codes), PIS/PASEP, CNO, NUPJ (labor lawsuit numbers), and SQL
-("Sequencial de Quadra") for real estate. Zero runtime dependencies.
+("Sequencial de Quadra") for real estate. Zero runtime dependencies for the core package — the one exception is
+the optional `location/extended_cep.py` module (see below), which requires the `extended-cep` extra.
 
 ## Development commands
 
@@ -53,7 +54,7 @@ Code lives under `src/brazilian_ids/functions/<domain>/<id>.py`, grouped by real
 
 - `company/cnpj.py` — CNPJ
 - `person/cpf.py`, `person/pis_pasep.py`
-- `location/cep.py`, `location/municipio.py`, `location/states.py`
+- `location/cep.py`, `location/extended_cep.py`, `location/municipio.py`, `location/states.py`
 - `labor_dispute/nupj.py`
 - `real_state/cno.py`, `real_state/sql.py`
 - `functions/exceptions.py` — shared base exceptions
@@ -101,6 +102,29 @@ Follow this mixin pattern rather than duplicating `id_type()` in each exception 
 Dependency-free. Holds the core `CEP` dataclass (frozen, with `__ge__`/`__le__` for range comparisons),
 `parse`/`format`/`is_valid`, and `is_valid_extended`, which checks a CEP against known per-state numeric ranges
 (`CepRange`, a singleton via the local `Singleton` metaclass) without any network access.
+
+### `location/extended_cep.py`
+
+Validates a CEP against its actual registered state/neighborhood by querying the
+[ViaCEP](https://viacep.com.br/) API, rather than the static ranges in `cep.py`. Needs `httpx` and `pydantic`,
+declared under the `extended-cep` optional dependency group in `pyproject.toml` (also included in the `dev` group
+so `uv sync` pulls them for local development/testing).
+
+- `ViaCepResponse` (`pydantic.BaseModel`) — validates/parses the ViaCEP JSON response shape (`estado`, `bairro`,
+  `erro`, etc).
+- `ViaCepClient` (`abc.ABC`) — abstract interface with one abstract method, `fetch(cep: str) -> ViaCepResponse`;
+  implementations must raise `CepNotFoundError` when the source has no record for the CEP.
+- `ViaCepHttpClient(ViaCepClient)` — concrete implementation using `httpx`, GETs
+  `https://viacep.com.br/ws/<digits>/json/`.
+- `CepDetails` — `@dataclass(frozen=True, slots=True)` holding only the two fields
+  `ExternalSourceCepValidation` actually needs (`state` from `estado`, `location` from `bairro`).
+- `ExternalSourceCepValidation` — takes any `ViaCepClient` plus a `cache_size` (default `DEFAULT_CACHE_SIZE = 300`)
+  and wraps lookups in a per-instance `functools.lru_cache`. Exposes `by_state(cep, state)` and
+  `by_location(cep, state, location)`; both return `False` (rather than raising) for malformed CEPs or a
+  `CepNotFoundError` from the source.
+
+Tests in `tests/test_extended_cep.py` use a `FakeViaCepClient` (a `ViaCepClient` subclass) rather than hitting the
+real ViaCEP API — follow that pattern for any new tests here instead of making real network calls.
 
 ### Tests
 

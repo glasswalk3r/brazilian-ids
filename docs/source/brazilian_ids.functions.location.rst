@@ -12,6 +12,14 @@ brazilian\_ids.functions.location.cep module
    :undoc-members:
    :show-inheritance:
 
+brazilian\_ids.functions.location.extended\_cep module
+--------------------------------------------------------
+
+.. automodule:: brazilian_ids.functions.location.extended_cep
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 brazilian\_ids.functions.location.municipio module
 --------------------------------------------------
 
