@@ -118,7 +118,9 @@ target-version = "py312"
 select = ["E4", "E7", "E9", "F", "RUF", "UP"]
 
 [tool.bumpversion]
-current_version = "0.3.0"
+# current_version is intentionally not set here: bump-my-version derives it from the latest
+# matching git tag (see tag_name below) so [project].version stays the only version literal
+# written in this file. Bootstrapped with `git tag 0.3.0` to match [project].version above.
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 search = "{current_version}"
