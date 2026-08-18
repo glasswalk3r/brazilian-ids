@@ -58,12 +58,6 @@ version = "0.4.0"
 source = { editable = "." }
 
 [package.optional-dependencies]
-extended-cep = [
-    { name = "httpx" },
-    { name = "pydantic" },
-]
-
-[package.dev-dependencies]
 dev = [
     { name = "bump-my-version" },
     { name = "httpx" },
@@ -76,27 +70,27 @@ dev = [
     { name = "tox" },
     { name = "tox-uv-bare" },
 ]
+extended-cep = [
+    { name = "httpx" },
+    { name = "pydantic" },
+]
 
 [package.metadata]
 requires-dist = [
+    { name = "bump-my-version", marker = "extra == 'dev'", specifier = "==0.25.4" },
+    { name = "httpx", marker = "extra == 'dev'", specifier = "==0.28.1" },
     { name = "httpx", marker = "extra == 'extended-cep'", specifier = "==0.28.1" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = "==1.11.0" },
+    { name = "pydantic", marker = "extra == 'dev'", specifier = "==2.13.4" },
     { name = "pydantic", marker = "extra == 'extended-cep'", specifier = "==2.13.4" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = "==8.3.2" },
+    { name = "pytest-cov", marker = "extra == 'dev'", specifier = "==5.0.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.16.3" },
+    { name = "sphinx", marker = "extra == 'dev'", specifier = "==8.0.2" },
+    { name = "tox", marker = "extra == 'dev'", specifier = ">=4.60.0" },
+    { name = "tox-uv-bare", marker = "extra == 'dev'", specifier = ">=1.36.0" },
 ]
-provides-extras = ["extended-cep"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "bump-my-version", specifier = "==0.25.4" },
-    { name = "httpx", specifier = "==0.28.1" },
-    { name = "mypy", specifier = "==1.11.0" },
-    { name = "pydantic", specifier = "==2.13.4" },
-    { name = "pytest", specifier = "==8.3.2" },
-    { name = "pytest-cov", specifier = "==5.0.0" },
-    { name = "ruff", specifier = ">=0.16.3" },
-    { name = "sphinx", specifier = "==8.0.2" },
-    { name = "tox", specifier = ">=4.60.0" },
-    { name = "tox-uv-bare", specifier = ">=1.36.0" },
-]
+provides-extras = ["extended-cep", "dev"]
 
 [[package]]
 name = "bump-my-version"
