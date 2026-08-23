@@ -49,7 +49,7 @@ extended-cep = ["httpx==0.28.1", "pydantic==2.13.4"]
 dev = [
     "bump-my-version==1.5.1",
     "mypy==2.3.1",
-    "pytest==8.3.2",
+    "pytest==9.1.1",
     "pytest-cov==7.1.0",
     "Sphinx==8.1.3",
     "httpx==0.28.1",
