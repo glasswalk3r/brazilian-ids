@@ -47,7 +47,7 @@ dependencies = []
 [project.optional-dependencies]
 extended-cep = ["httpx==0.28.1", "pydantic==2.13.5"]
 dev = [
-    "bump-my-version==1.5.1",
+    "bump-my-version==1.6.0",
     "mypy==2.4.0",
     "pytest==9.1.1",
     "pytest-cov==7.1.0",
